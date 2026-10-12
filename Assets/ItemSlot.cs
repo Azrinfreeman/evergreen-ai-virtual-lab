@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ItemSlot : MonoBehaviour, IDropHandler
 {
@@ -49,6 +50,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         {
             Debug.Log("stuck");
         }
+        GetComponent<Image>().enabled = false;
     }
 
     void OnTriggerStay2D(Collider2D collision)

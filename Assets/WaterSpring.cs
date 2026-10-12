@@ -70,7 +70,7 @@ public class WaterSpring : MonoBehaviour
         {
             FallingObject fallingObject = other.gameObject.GetComponent<FallingObject>();
             Rigidbody2D rb = fallingObject.GetComponent<Rigidbody2D>();
-            var speed = rb.velocity;
+            var speed = rb.linearVelocity;
 
             velocity += speed.y / resistance;
         }

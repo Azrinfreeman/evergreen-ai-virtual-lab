@@ -14,7 +14,7 @@ public class FallingObject : MonoBehaviour
 
     void Start()
     {
-        rigidbody2D.velocity = Vector3.down * forceAmount;
+        rigidbody2D.linearVelocity = Vector3.down * forceAmount;
     }
 
     void Update()
@@ -42,7 +42,7 @@ public class FallingObject : MonoBehaviour
         }
         if (isMoving)
         {
-            rigidbody2D.velocity = movementDirection * forceAmount;
+            rigidbody2D.linearVelocity = movementDirection * forceAmount;
         }
     }
 }
