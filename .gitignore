@@ -74,3 +74,4 @@ New folder/
 debug.log
 *BurstDebugInformation_DoNotShip/
 .DS_Store
+*.slnx
