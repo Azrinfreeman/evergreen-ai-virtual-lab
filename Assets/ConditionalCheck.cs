@@ -34,7 +34,11 @@ public class ConditionalCheck : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        procedurNum = Int32.Parse(transform.name);
+        // Duplicate procedure pages retain Unity's suffix, e.g. "5 (1)".
+        // Preserve an explicit Inspector value for pages without a numeric name.
+        string number = transform.name.Split(' ')[0];
+        if (Int32.TryParse(number, out int parsedNumber))
+            procedurNum = parsedNumber;
     }
 
     public void CheckCondition()

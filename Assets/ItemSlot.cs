@@ -55,6 +55,11 @@ public class ItemSlot : MonoBehaviour, IDropHandler
 
     void OnTriggerStay2D(Collider2D collision)
     {
+        // Generic drop slots in other experiments do not have electrode bindings.
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName != "akt6" && sceneName != "akt7") return;
+        if (ConditionalCheck == null) return;
+
         if (SceneManager.GetActiveScene().name == "akt7")
         {
             if (ConditionalCheck.name == "3")

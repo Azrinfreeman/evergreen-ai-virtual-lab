@@ -1,43 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class NextExperimentController : MonoBehaviour
 {
-    [SerializeField]
-    private Transform parent;
+    [SerializeField] private Transform parent;
+    [SerializeField] private Transform nextParent;
 
-    [SerializeField]
-    private Transform nextParent;
-
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        parent = transform.parent;
-        if (transform.parent.GetSiblingIndex() + 1 != transform.parent.transform.parent.childCount)
+        if (parent == null) parent = transform.parent;
+        // Resolve from this page, not whichever sibling happens to be active.
+        if (nextParent == null && parent != null && parent.parent != null)
         {
-            for (int i = 0; i < transform.parent.transform.parent.childCount; i++)
-            {
-                if (parent.transform.parent.GetChild(i).gameObject.activeSelf)
-                {
-                    nextParent = parent.transform.parent.GetChild(i + 1).transform;
-                }
-            }
+            int nextIndex = parent.GetSiblingIndex() + 1;
+            if (nextIndex < parent.parent.childCount)
+                nextParent = parent.parent.GetChild(nextIndex);
         }
-        if (transform.parent.GetSiblingIndex() + 1 == transform.parent.transform.parent.childCount)
-        {
-            GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "TAMAT";
 
-            GetComponent<Button>().onClick.AddListener(() => tamat());
-        }
-        else
+        Button button = GetComponent<Button>();
+        if (nextParent == null)
         {
-            GetComponent<Button>().onClick.AddListener(() => NextExperiment());
+            TextMeshProUGUI label = GetComponentInChildren<TextMeshProUGUI>();
+            if (label != null) label.text = "Tamat";
+            button.onClick.AddListener(tamat);
         }
+        else button.onClick.AddListener(NextExperiment);
     }
 
     public void tamat()
@@ -47,10 +36,8 @@ public class NextExperimentController : MonoBehaviour
 
     public void NextExperiment()
     {
+        if (parent == null || nextParent == null) return;
         parent.gameObject.SetActive(false);
         nextParent.gameObject.SetActive(true);
     }
-
-    // Update is called once per frame
-    void Update() { }
 }

@@ -20,6 +20,13 @@ public class QuestionController : MonoBehaviour
     public int countQuestion;
     public int countStep;
 
+    [Header("Answer presentation")]
+    [SerializeField] private Color answerColor = new Color32(232, 239, 248, 255);
+    [SerializeField] private Color correctAnswerColor = new Color32(221, 239, 225, 255);
+    [SerializeField] private Color otherAnswerColor = new Color32(248, 231, 231, 255);
+    [SerializeField] private TextMeshProUGUI feedbackLabel;
+    private bool answerLayoutDirty = true;
+
     void defaultAvatarFace()
     {
         avatarState.GetChild(0).gameObject.SetActive(true);
@@ -60,6 +67,7 @@ public class QuestionController : MonoBehaviour
 
     private void applyAnswerOnButton()
     { //disable all buttons first
+        answerLayoutDirty = true;
         /*
             switch (countStep)
             {
@@ -147,15 +155,21 @@ public class QuestionController : MonoBehaviour
 
     void disableAllButtons(bool boolean)
     {
-        //turn everybutton to disable
+        if (!boolean && feedbackLabel != null)
+            feedbackLabel.text = "Sedang menyemak jawapan...";
         for (int i = 0; i < answerBtn.Count; i++)
         {
-            answerBtn[i].GetComponent<Button>().enabled = boolean;
+            Button answerButton = answerBtn[i].GetComponent<Button>();
+            // Keep the existing input lock and expose it to Selectable navigation and tinting.
+            answerButton.interactable = boolean;
+            answerButton.enabled = boolean;
         }
     }
 
     void showRealAnswer()
     {
+        answerLayoutDirty = true;
+        if (feedbackLabel != null) feedbackLabel.text = "Jawapan betul ditandakan di bawah.";
         for (int i = 0; i < answerBtn.Count; i++)
         {
             if (
@@ -166,20 +180,23 @@ public class QuestionController : MonoBehaviour
                     .answeOnBtn == i
             )
             {
-                answerBtn[i].GetComponent<Image>().color = new Color32(145, 187, 21, 255);
+                answerBtn[i].GetComponent<Image>().color = correctAnswerColor;
+                TextMeshProUGUI label = answerBtn[i].GetChild(0).GetComponent<TextMeshProUGUI>();
+                label.text = "Betul: " + label.text;
             }
             else
             {
-                answerBtn[i].GetComponent<Image>().color = Color.red;
+                answerBtn[i].GetComponent<Image>().color = otherAnswerColor;
             }
         }
     }
 
     void resetButton()
     {
+        if (feedbackLabel != null) feedbackLabel.text = "";
         for (int i = 0; i < answerBtn.Count; i++)
         {
-            answerBtn[i].GetComponent<Image>().color = new Color32(145, 187, 21, 255);
+            answerBtn[i].GetComponent<Image>().color = answerColor;
         }
     }
 
@@ -268,7 +285,27 @@ public class QuestionController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update() { }
+    private void OnRectTransformDimensionsChange()
+    {
+        answerLayoutDirty = true;
+    }
+
+    private void LateUpdate()
+    {
+        if (!answerLayoutDirty || answerBtn == null) return;
+        answerLayoutDirty = false;
+        Canvas.ForceUpdateCanvases();
+        foreach (Transform answer in answerBtn)
+        {
+            if (answer == null || !answer.gameObject.activeSelf) continue;
+            LayoutElement layout = answer.GetComponent<LayoutElement>();
+            TextMeshProUGUI label = answer.GetChild(0).GetComponent<TextMeshProUGUI>();
+            if (layout == null || label == null) continue;
+            layout.minHeight = Mathf.Max(88f,
+                label.GetPreferredValues(label.text, label.rectTransform.rect.width, 0).y + 24f);
+            layout.preferredHeight = layout.minHeight;
+        }
+    }
 
     public void startQuestion()
     {

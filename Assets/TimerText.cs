@@ -1,83 +1,58 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TimerText : MonoBehaviour
 {
-    public TextMeshProUGUI timerText; // Assign a UI Text (or TMP_Text) in Inspector
+    public TextMeshProUGUI timerText;
     public float elapsedTime = 0f;
-    public float timeMultiplier = 22f;
+    [Min(0)] public float timeMultiplier = 22f;
     private bool counting = true;
 
     public bool isMinute;
     public bool is45min;
-
     public bool isTimer;
+
+    [Tooltip("Optional duration in simulated seconds. Zero preserves the legacy 30/45/60 duration.")]
+    [SerializeField, Min(0)] private float durationSeconds;
+    [Tooltip("Controls revealed only when this timer or temperature reaches its target.")]
+    [SerializeField] private GameObject[] completionTargets = new GameObject[0];
+    [SerializeField] private UnityEvent onCompleted = new UnityEvent();
 
     [Space]
     public float currentTemp = 35f;
-    public float speed = 5f; // how fast it rises (adjust as needed)
+    [Min(0)] public float speed = 5f;
     public float targetTemp = 37f;
 
-    void Update()
+    public bool IsComplete { get; private set; }
+    public float Duration => durationSeconds > 0 ? durationSeconds : isMinute ? 60f : is45min ? 45f : 30f;
+
+    private void Update()
     {
-        if (counting)
+        if (!counting) return;
+
+        if (isTimer)
         {
-            elapsedTime += Time.deltaTime * timeMultiplier;
-
-            if (isTimer)
-            {
-                // Convert seconds into minutes and seconds
-                int minutes = Mathf.FloorToInt(elapsedTime / 60f);
-                int seconds = Mathf.FloorToInt(elapsedTime % 60f);
-
-                // Format MM:SS
-                timerText.text = string.Format("{0:0}:{1:00}", minutes, seconds);
-
-                if (isMinute)
-                {
-                    // Stop at 1:00 (one hour)
-                    if (minutes >= 1 && seconds >= 0)
-                    {
-                        counting = false;
-                        timerText.text = "1:00"; // Lock display at 1:00
-                    }
-                }
-                else if (is45min)
-                {
-                    // Stop at 0:45 (45 minutes)
-                    if (minutes == 0 && seconds >= 45)
-                    {
-                        counting = false;
-                        timerText.text = "0:45"; // Lock display at 1:00
-                    }
-                }
-                else
-                {
-                    // Stop at 0:30 (30 minutes)
-                    if (minutes == 0 && seconds >= 30)
-                    {
-                        counting = false;
-                        timerText.text = "0:30"; // Lock display at 1:00
-                    }
-                }
-            }
-            else
-            {
-                if (currentTemp < targetTemp)
-                {
-                    // Increase temperature smoothly
-                    currentTemp += Time.deltaTime * speed;
-
-                    // Clamp so it doesn’t overshoot
-                    if (currentTemp > targetTemp)
-                        currentTemp = targetTemp;
-
-                    // Display as integer (no decimals)
-                    timerText.text = Mathf.FloorToInt(currentTemp).ToString() + "°C";
-                }
-            }
+            // Clamp before formatting; a long frame must not skip the completion threshold.
+            elapsedTime = Mathf.Min(Duration, elapsedTime + Time.deltaTime * Mathf.Max(0, timeMultiplier));
+            if (timerText != null)
+                timerText.text = string.Format("{0:0}:{1:00}", Mathf.FloorToInt(elapsedTime / 60f), Mathf.FloorToInt(elapsedTime % 60f));
+            if (elapsedTime >= Duration) Complete();
         }
+        else
+        {
+            currentTemp = Mathf.MoveTowards(currentTemp, targetTemp, Time.deltaTime * Mathf.Max(0, speed));
+            if (timerText != null) timerText.text = Mathf.FloorToInt(currentTemp) + "°C";
+            if (Mathf.Approximately(currentTemp, targetTemp)) Complete();
+        }
+    }
+
+    private void Complete()
+    {
+        counting = false;
+        IsComplete = true;
+        foreach (GameObject target in completionTargets)
+            if (target != null) target.SetActive(true);
+        onCompleted.Invoke();
     }
 }

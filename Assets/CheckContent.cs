@@ -12,53 +12,27 @@ public class CheckContent : MonoBehaviour
 
     public bool toDisappear;
 
+    private bool completed;
+
     // Start is called before the first frame update
     void Start() { }
 
     // Update is called once per frame
     void Update()
     {
-        for (int i = 0; i < item.Count; i++)
+        if (completed || item == null || item.Count == 0) return;
+
+        l = 0;
+        foreach (Transform requiredItem in item)
         {
-            l = 0;
-            if (!toDisappear)
-            {
-                if (!item[i].gameObject.activeSelf)
-                {
-                    l++;
-                    if (i == l)
-                    {
-                        toAppear[0].gameObject.SetActive(true);
-                        if (toAppear[1] != null)
-                        {
-                            toAppear[1].gameObject.SetActive(true);
-                        }
-                        if (toAppear[2] != null)
-                        {
-                            toAppear[2].gameObject.SetActive(true);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (item[i].gameObject.activeSelf)
-                {
-                    l++;
-                    if (i == l)
-                    {
-                        toAppear[0].gameObject.SetActive(true);
-                        if (toAppear[1] != null)
-                        {
-                            toAppear[1].gameObject.SetActive(true);
-                        }
-                        if (toAppear[2] != null)
-                        {
-                            toAppear[2].gameObject.SetActive(true);
-                        }
-                    }
-                }
-            }
+            if (requiredItem == null || requiredItem.gameObject.activeSelf != toDisappear)
+                return;
+            l++;
         }
+
+        // Activate once: polling must not reopen controls hidden by later actions.
+        completed = true;
+        foreach (Transform target in toAppear)
+            if (target != null) target.gameObject.SetActive(true);
     }
 }

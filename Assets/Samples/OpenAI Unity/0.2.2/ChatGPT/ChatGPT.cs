@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +23,14 @@ namespace OpenAI
         [SerializeField]
         private RectTransform received;
 
+        [SerializeField]
+        [Tooltip("OpenAI model ID used by the science tutor. Requires access on the API account.")]
+        private string model = "gpt-6-luna";
+
         public CheckBehaviour checkBehaviour;
+
+        [SerializeField] private TMPro.TextMeshProUGUI statusLabel;
+        private bool sending;
 
         private float height;
         public string[,] tablePrompts = new string[,]
@@ -98,10 +106,9 @@ namespace OpenAI
             return false;
         }
 
-        public OpenAIApi openai = new OpenAIApi(
-            "REMOVED_SET_OPENAI_API_KEY",
-            "REMOVED_ORG"
-        );
+        // Key comes from the OPENAI_API_KEY environment variable; when it is unset the
+        // OpenAI-Unity package falls back to ~/.openai/auth.json. Never hard-code keys here.
+        public OpenAIApi openai = new OpenAIApi(Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
 
         private List<ChatMessage> messages = new List<ChatMessage>();
         public string prompt =
@@ -141,39 +148,68 @@ namespace OpenAI
 
         private async void SendReply()
         {
-            var newMessage = new ChatMessage() { Role = "user", Content = inputField.text };
+            await SendReplyAsync(request => openai.CreateChatCompletion(request));
+        }
 
-            AppendMessage(newMessage);
+        // Keep the UI event entry point small and allow the request flow to be checked locally.
+        private async Task SendReplyAsync(
+            Func<CreateChatCompletionRequest, Task<CreateChatCompletionResponse>> requestCompletion)
+        {
+            if (sending || string.IsNullOrWhiteSpace(inputField.text)) return;
+            sending = true;
+            button.interactable = false;
+            inputField.interactable = false;
+            if (statusLabel != null) statusLabel.text = "Sedang menyediakan jawapan...";
 
-            if (messages.Count == 0)
-                newMessage.Content = prompt + "\n" + inputField.text;
-
-            messages.Add(newMessage);
-
-            button.enabled = false;
-            inputField.text = "";
-            inputField.enabled = false;
-
-            // Complete the instruction
-            var completionResponse = await openai.CreateChatCompletion(
-                new CreateChatCompletionRequest() { Model = "gpt-4o-mini", Messages = messages }
-            );
-
-            if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
+            try
             {
-                var message = completionResponse.Choices[0].Message;
-                message.Content = message.Content.Trim();
+                var newMessage = new ChatMessage() { Role = "user", Content = inputField.text.Trim() };
+                AppendMessage(newMessage);
+                if (messages.Count == 0) newMessage.Content = prompt + "\n" + newMessage.Content;
+                messages.Add(newMessage);
+                inputField.text = "";
 
-                messages.Add(message);
-                AppendMessage(message);
+                var response = await requestCompletion(new CreateChatCompletionRequest()
+                {
+                    Model = model,
+                    Messages = messages,
+                    Temperature = null,
+                    PresencePenalty = null,
+                    FrequencyPenalty = null,
+                });
+                if (this == null) return;
+
+                if (response.Error != null)
+                {
+                    if (statusLabel != null)
+                        statusLabel.text = "Jawapan tidak dapat dimuatkan. Cuba lagi.";
+                }
+                else if (response.Choices != null && response.Choices.Count > 0
+                    && !string.IsNullOrWhiteSpace(response.Choices[0].Message.Content))
+                {
+                    var message = response.Choices[0].Message;
+                    message.Content = message.Content.Trim();
+                    messages.Add(message);
+                    AppendMessage(message);
+                    if (statusLabel != null) statusLabel.text = "Semak jawapan bersama bahan pembelajaran.";
+                }
+                else if (statusLabel != null)
+                    statusLabel.text = "Tiada jawapan diterima. Cuba hantar soalan semula.";
             }
-            else
+            catch (Exception)
             {
-                Debug.LogWarning("No text was generated from this prompt.");
+                if (this != null && statusLabel != null)
+                    statusLabel.text = "Jawapan tidak dapat dimuatkan. Cuba lagi.";
             }
-
-            button.enabled = true;
-            inputField.enabled = true;
+            finally
+            {
+                if (this != null)
+                {
+                    sending = false;
+                    if (button != null) button.interactable = true;
+                    if (inputField != null) inputField.interactable = true;
+                }
+            }
         }
     }
 }
