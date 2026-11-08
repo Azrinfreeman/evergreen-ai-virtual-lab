@@ -75,3 +75,9 @@ debug.log
 *BurstDebugInformation_DoNotShip/
 .DS_Store
 *.slnx
+
+# Secrets
+.openai/
+auth.json
+.env
+.env.*

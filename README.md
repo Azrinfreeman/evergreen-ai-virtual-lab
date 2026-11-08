@@ -23,7 +23,7 @@ Flow: `LoginPage` → `Dashboard` → `Experiments/aktN` or `Quiz/Uji Diri N` �
 - **Scoped behaviour**: the tutor answers only science questions and stays in character as a scientist.
 - Async request flow with a Malay status line ("Sedang menyediakan jawapan…"), error and empty-response handling, and input locking while a reply is pending.
 - The assistant lives in a persistent `DontDestroyOnLoad` canvas, so it survives every scene change without duplicating.
-- **API key handling**: the key is read from the `OPENAI_API_KEY` environment variable, falling back to `~/.openai/auth.json`. No key is stored in the project.
+- **API key handling**: the key is read from the `OPENAI_API_KEY` environment variable, falling back to `~/.openai/auth.json`. No key is stored in the project. See [`docs/OPENAI_SETUP.md`](docs/OPENAI_SETUP.md).
 
 ### 2. AI-assisted development workflow (Claude Code + Unity MCP)
 The project was built and revamped with AI coding agents driving the Unity Editor directly through the [Unity MCP](https://github.com/CoplayDev/unity-mcp) bridge:
@@ -44,7 +44,7 @@ The project was built and revamped with AI coding agents driving the Unity Edito
    ```powershell
    setx OPENAI_API_KEY "<your key>"
    ```
-   Restart Unity afterwards. Without a key the tutor reports an error and the rest of the app still works.
+   Restart Unity afterwards. Without a key the tutor reports an error and the rest of the app still works. Full guide: [`docs/OPENAI_SETUP.md`](docs/OPENAI_SETUP.md).
 4. Experiments and quizzes can be opened directly from `Assets/Scenes/Experiments/` and `Assets/Scenes/Quiz/`. The persistent assistant is created by the Dashboard, so enter through it to see the tutor.
 
 ## Project layout
