@@ -54,3 +54,11 @@ Open, for the teacher:
 - Page 6: the three generic cards do not name "Sains" (add a bullet, or keep).
 - A3 page 3: the review flagged "Bakteria Baik" against "bakteria berfaedah". The body text says "Bakteria baik, juga dikenali sebagai bakteria berfaedah", which gives the two terms as aliases, so this may be intended. Confirm before changing.
 - akt7 science content (reagent forms and quantities, curing conditions, Flory-Rehner inputs, waste-capture method): see the akt7 entry in IMPLEMENTATION.md. This needs a reference or teacher sign-off.
+
+## Teacher decisions - 2026-11-12 (owner answers)
+
+- Page 7 "gadget": kept.
+- Page 8 "dehidrasi": kept.
+- Page 11 sub-title: changed to "Sains untuk kehidupan manusia" (both activity copies).
+- A3 page 3 "Bakteria Baik" / "bakteria berfaedah": kept both; the body states they are the same thing.
+- Still open: page 6 (add a bullet naming "Sains", or keep), and the akt7 science review.
