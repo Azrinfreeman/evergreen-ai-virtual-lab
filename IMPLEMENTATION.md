@@ -143,7 +143,7 @@ The checkboxes in this section are the original plan and were mostly not ticked 
 | 3 Experiments | Done for akt3-akt7 | Step counters, slot cues, drag lift, completion chips; scripted drop checks on akt3, akt4, akt5, akt6 (pages `0 (2)`, `0 (3)`, `0 (4)`, `0 (8)`) and akt7. Open: akt6 pages handled by other scripts, real mouse drags, akt5 pages 4/6/8/11/`13 (1)` visual capture (measured only). |
 | 4 Quizzes | Done | All 7 quizzes scripted end to end; owner confirmed physical mouse/keyboard on the quizzes. Open: reduce-motion on, `QuitPrompt` visuals. |
 | 5 Overlays, dialogs, input | Mostly done | Assistant icon + shared "Tetapan" dialog (reduce motion, sound) in the prefab for all 13 scenes. Open: live assistant behaviour (separate service work), keyboard Tab order on the new stations. |
-| 6 Player and hand-off | Open | No desktop build exists (`Temp/ScienceUIBuild` is gone); needs a rebuild and a Login to quiz smoke test. Hand-off guide is `docs/tutorial/ui-feel.md`. |
+| 6 Player and hand-off | Mostly done | Rebuilt `Temp/ScienceUIBuild/Evergreen.exe` (0 errors) and verified 1280x720 startup (0 log errors); 10/10 EditMode tests pass; `docs/tutorial/ui-feel.md`, `docs/ai/scene-map.md`, `docs/ai/script-map.md`, and the three human-editing paths are recorded below. Open: manual interactive playthrough inside the standalone `.exe`. |
 
 Still outside this pass: A10 diagram labels (needs terms), A1 local progress, A9 scene fade, the "Penkulturan" term, grayscale/colour-vision review, rendered hit-area checks, and listening to the sound cues.
 
@@ -856,3 +856,18 @@ The user reviewed the remaining open items and approved the decisions below. Thi
 - A1 local progress and A9 scene fade are approved/deferred, not implemented.
 - A10 diagram labels still needs the owner or a teacher to supply the terms.
 - Not tested: physical mouse drags, the new A2 pages at the other five resolutions, the other scenes' cues by ear, and the standalone player.
+
+### Stage 6 build, tests, and final handoff - 2026-11-12
+
+- **EditMode tests:** ran `Evergreen.TutorDemo.Tests.DemoTutorMatcherTests` through Unity Test Runner; **10 of 10 passed** in `0.63 s` with zero failures.
+- **Desktop player build:** built `StandaloneWindows64` (development build, all 14 enabled scenes) to `Temp/ScienceUIBuild/Evergreen.exe` in `62.58 s` (`407.4 MB`, `0` errors, `5` pre-existing warnings).
+- **Standalone player startup check:** launched `Temp/ScienceUIBuild/Evergreen.exe -screen-width 1280 -screen-height 720 -screen-fullscreen 0 -logFile Temp/qa_screens/windows-player-startup.log`. The process stayed running for `6 s`, initialized Unity `6000.6.7f1` and Direct3D 11 (`AMD Radeon RX 6600 XT`), and logged `0` error/exception/assertion lines before being stopped. Full interactive mouse/keyboard play inside the standalone `.exe` remains a manual owner check.
+- **Documentation and maps updated:**
+  - `docs/tutorial/ui-feel.md` expanded with the full inventory of `Assets/UI/Science/Scripts/`, per-component Inspector fields and defaults, step-by-step instructions for changing durations/scales and button/quiz colours, wiring a new `ItemSlot` `tick`, learner `Tetapan` switches, and hierarchy/physics contracts.
+  - `docs/ai/scene-map.md` and `docs/ai/script-map.md` updated to reflect the 14 enabled build scenes, per-canvas scaler settings, `LearningAssistant.prefab`, and the new science UI scripts.
+- **Final human-customization paths (verified against saved scenes/prefabs):**
+  1. **Change a heading:** open `Assets/Scenes/Dashboard.unity` and select `Canvas/Container/Into/Content/7/bg/Top/topText` (`TextMeshProUGUI`) to edit Activity 7's hub heading (`"Aktiviti 7: Teknologi filem getah"`), or open `Assets/Scenes/Experiments/akt6.unity` and select `Canvas/Experiments/Content/0/Text (TMP) (1)` (`"Langkah 1 daripada 5: Sediakan Balang"`). Headings are scene-owned TMP strings and do not overwrite other pages.
+  2. **Change a shared or repeated action-button colour:**
+     - *Shared across all 13 scenes via prefab:* open `Assets/UI/Science/Prefabs/LearningAssistant.prefab` and edit `TetapanPrompt/Panel/CloseButton` (`Button` `ColorBlock`) or the root `UiSettingsPrompt` (`onColor` `#166534`, `offColor` `#46556B`). All 13 scene instances inherit changes unless an instance has a scene-level property override.
+     - *Scene-owned primary action buttons (`Mula eksperimen`, `Seterusnya`, `Masuk makmal`):* action buttons are scene objects without a shared `.preset` file. Select the `Button` in its owning scene (for example `Canvas/Welcome/Content/Button` in `Assets/Scenes/Experiments/akt6.unity`) and edit its `ColorBlock` (`Normal Color` = `Selected Color` = `#3D5AFE`, `Highlighted Color` = `#5C74FF`, `Pressed Color` = `#2A44D4`, `Disabled Color` = `#A0A9B9`). Keep `Selected Color` equal to `Normal Color` so keyboard focus shows the `UiFocusIndicator` ring rather than a permanent fill.
+  3. **Change an experiment instruction or supporting note:** open `Assets/Scenes/Experiments/akt5.unity` and expand `Canvas/Experiments/Content/5`. Edit `Text (TMP) (4)` (`TextMeshProUGUI`) for the primary step instruction or `Text (TMP) (2)` for the italic supporting note beneath it. Keep `offsetMax.x = -400` so long lines wrap clear of the top-right `Tetapan` chip.
