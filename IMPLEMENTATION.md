@@ -955,3 +955,9 @@ The draft doc said "Bumi" (page `content (3)`) and "Turbin angin" / "Pengkomposa
 ### Page 0 (6) electrode follow-up - 2026-11-12
 
 - Play Mode screenshot `Temp/qa_screens/scan/cleanup-page06.png` shows no neon-green rectangle. The drop target is the cyan `SlotCue` frame (Phase 3.2), which is the intended outline. The electrode and wire use the existing apparatus art. The earlier note came from before the slot-cue change, so it is resolved and no art change is needed.
+
+### Curriculum review follow-up - 2026-11-12
+
+- Confirmed the review's two medium typos were already fixed in `Dashboard.unity`.
+- Applied three mechanical fixes (double spaces on A1/A2 page 14 and page 13, a missing full stop on page 7). Scene saved.
+- Wording and science questions are listed as open decisions in `docs/curriculum-review-a2l1-a3.md`. They need teacher sign-off, not an automatic change.

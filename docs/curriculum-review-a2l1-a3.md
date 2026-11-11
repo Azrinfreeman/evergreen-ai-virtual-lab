@@ -37,3 +37,20 @@ The chain is coherent: page 5 ends "Contoh Teknologi Hijau", page 6 opens "Sains
 
 - I did not verify the A2 L1 page 6–14 and A3 text against the Malaysian national curriculum syllabus (KSSM), because no curriculum document is available in this session.
 - I did not re-check akt7's science content in this pass; the akt7 review remains the same "confirm the reagent forms/quantities and waste-capture method" list recorded in the akt7 content-cleanup entry in [IMPLEMENTATION.md](../IMPLEMENTATION.md).
+
+## Status - 2026-11-12
+
+Already fixed before this pass: "Pengingkatan" → "Peningkatan" (page 10) and "kuality" → "kualiti" (page 11). The stray pipe characters on pages 12–13 are no longer in the scene.
+
+Applied in `Dashboard.unity` (both activity 1 and activity 2 copies where they exist):
+- Page 14: "Apakah  M" → "Apakah M" (double space).
+- Page 13: "dan  mempertimbangkan" → "dan mempertimbangkan" (double space).
+- Page 7: full stop added to "Mari kita terokai konsep teknologi yang lebih luas dan mendalam".
+
+Open, for the teacher:
+- Page 7: "gadget" (keep, or translate, for example to "alat").
+- Page 8: "dehidrasi" (keep, or "kehilangan air dalam badan").
+- Page 11: sub-title "Seni Sains untuk kehidupan manusia" (keep, or "Sains untuk kehidupan manusia").
+- Page 6: the three generic cards do not name "Sains" (add a bullet, or keep).
+- A3 page 3: the review flagged "Bakteria Baik" against "bakteria berfaedah". The body text says "Bakteria baik, juga dikenali sebagai bakteria berfaedah", which gives the two terms as aliases, so this may be intended. Confirm before changing.
+- akt7 science content (reagent forms and quantities, curing conditions, Flory-Rehner inputs, waste-capture method): see the akt7 entry in IMPLEMENTATION.md. This needs a reference or teacher sign-off.
