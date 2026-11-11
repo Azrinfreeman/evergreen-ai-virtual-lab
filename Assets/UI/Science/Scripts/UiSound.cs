@@ -3,8 +3,8 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Sound switch saved in PlayerPrefs. It mutes the game's sound-effect sources (the ones under
-/// the scene root named "Sfx") and the background music (MusicLoopingController), so other audio
-/// such as a future assistant voice is not silenced.
+/// the scene root named "Sfx"), the background music (MusicLoopingController), and sources owned
+/// by UiPlaySoundOnEnable, so other audio such as a future assistant voice is not silenced.
 /// The setting is applied again whenever a scene finishes loading.
 /// </summary>
 public static class UiSound
@@ -29,7 +29,8 @@ public static class UiSound
         foreach (AudioSource source in Resources.FindObjectsOfTypeAll<AudioSource>())
         {
             if (source == null || !source.gameObject.scene.IsValid()) continue;
-            if (!IsEffect(source.transform) && !IsMusic(source)) continue;
+            bool isOwnedCue = source.GetComponent<UiPlaySoundOnEnable>() != null;
+            if (!IsEffect(source.transform) && !IsMusic(source) && !isOwnedCue) continue;
             source.mute = !enabled;
         }
     }

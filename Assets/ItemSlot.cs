@@ -253,7 +253,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
                     collision.transform.localPosition = new Vector3(0, 0, 0);
 
                     tick.gameObject.SetActive(true);
-                    ButtonNext.gameObject.SetActive(true);
+                    if (ButtonNext != null) ButtonNext.gameObject.SetActive(true);
                     //transform.gameObject.SetActive(false);
                 }
             }
@@ -269,7 +269,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
                     collision.transform.localPosition = new Vector3(0, 0, 0);
 
                     tick.gameObject.SetActive(true);
-                    ButtonNext.gameObject.SetActive(true);
+                    if (ButtonNext != null) ButtonNext.gameObject.SetActive(true);
                     //transform.gameObject.SetActive(false);
                 }
             }

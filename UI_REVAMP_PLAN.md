@@ -264,6 +264,8 @@ These either conflict with [AGENTS.md](AGENTS.md) as written, change behaviour, 
 | A10 | **Diagram labels on lesson illustrations** | Curriculum wording | Owner or teacher supplies terms |
 | A11 | **Title wording** ("Mikrobial Fuel Cell", "MFC", "RUBBER FILM", "PENKULTURAN") | Curriculum or brand terms | Owner decides; no silent rewrites |
 
+Owner decisions (2026-11-12): A1 approved for a later phase; A5 implemented as an akt6 pilot; A6 implemented with the existing `touchglass` and `yay` clips; A9 deferred; A10 blocked until terms are supplied; A11 uses Malay first with the English gloss at first mention. Implementation and evidence are recorded in [IMPLEMENTATION.md](IMPLEMENTATION.md).
+
 ## 8. Implementation phases
 
 Each phase is a separate slice: inspect, change, capture, owner review, then move on. Evidence goes into [IMPLEMENTATION.md](IMPLEMENTATION.md) under a new "UI revamp" heading.

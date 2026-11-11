@@ -2,7 +2,7 @@
 
 Status: implementation in progress. Live baseline inspection has started; the full revamp is not complete. Verified changes and remaining checks are recorded below.
 
-Updated: 2026-11-09. This is the authoritative plan for the full science UI revamp. [AGENTS.md](AGENTS.md) defines the lasting design and development rules. Keep progress and evidence here during implementation; do not treat a written task as completed work.
+Updated: 2026-11-12. This is the authoritative plan for the full science UI revamp. [AGENTS.md](AGENTS.md) defines the lasting design and development rules. Keep progress and evidence here during implementation; do not treat a written task as completed work.
 
 Next proposal (2026-11-10, not approved or started): [UI_REVAMP_PLAN.md](UI_REVAMP_PLAN.md) covers wayfinding, a colour system with meaning, and game feel across all screens. Record its evidence here once phases begin.
 
@@ -809,3 +809,34 @@ Observed, not changed: page `0 (6)` draws the second electrode as a plain neon-g
 ### akt5 bottom-instruction overlap fixed - 2026-11-11
 
 - On the 7 pages whose step instruction was bottom-anchored (4, 5, 6, 8, 11, 12, `13 (1)`), `Text (TMP) (4)` now sits in the white band under the header (top-left aligned, navy, 32 pt, right edge 400 px short of the canvas edge) with the approved note below it at y -156. This removes the overlap with the "Aksesori digester" label. Captured pages 5 and 12 (`Temp/qa_screens/scan/fix5.png`, `fix12.png`): clear. Page 15 (result) has no overlap and was left as is. Pages 4, 6, 8, 11 and `13 (1)` not captured; `13 (1)` has the longest instruction and could wrap onto the note.
+
+### Owner decisions and follow-up - 2026-11-12
+
+The user reviewed the remaining open items and approved the decisions below. This section supersedes the matching open notes above; earlier evidence is not re-verified here.
+
+**Decisions**
+
+- A11 title wording: Malay first, with the English gloss at first mention. Long titles use "Sel Bahan Bakar Mikrob (Microbial Fuel Cell, MFC)" once, then "MFC"; "RUBBER FILM" / "(Rubber Film)" becomes "Filem Getah". The existing Malay lesson title "Teknologi filem getah" stays sentence case.
+- Draft wording approved as written: akt5 and akt7 step titles, hub 4 and hub 7 detail lines, completion cards, result bands and score line. Those strings were already in the scenes/code, so no text changes were needed for the approval itself.
+- Unlinked pages: link the A2 L1 STEM continuation; remove the A3 orphan chain.
+- Section 7: A1 local progress approved for a later phase; A5 return-to-origin implemented as an akt6 pilot; A6 implemented with the existing `touchglass` and `yay` clips; A9 scene fade deferred; A10 diagram labels blocked until the owner or a teacher supplies the terms.
+
+**Implemented**
+
+- Dashboard, A2 L1: the chain now runs `content` -> `content (1)` -> `content (3)` -> `content (4)` -> `content (5)` -> `content (6)` ... -> `content (14)`. Page indicators read "Halaman N daripada 14" on all 14 pages. Page 5's "Tamat" is now "Seterusnya" and activates `content (6)`; page 14 keeps "Tamat" and returns to the hub. The indicators are static text: edit them by hand if pages are added or removed.
+- Dashboard, A3: the four-page bacteria lesson is unchanged. The eight green-tech/rubber orphan pages and their two image pages were removed after a serialized-reference scan found no external references. Backup: `Temp/qa_screens/Dashboard-before-A3-orphan-removal.unity`.
+- A11 wording: Dashboard hub 7 is now "Aktiviti 7: Teknologi filem getah"; the lesson theory keeps "Sel Bahan Bakar Mikrob (Microbial Fuel Cell, MFC)" and other occurrences now read "Sel Bahan Bakar Mikrob (MFC)". akt6's welcome and prestart titles use "Pembuatan Sel Bahan Bakar Mikrob (MFC) untuk Pelajar". A scene-text scan found zero "Mikrobial Fuel Cell" and zero "Rubber Film" strings in Dashboard; akt6 has no "Mikrobial Fuel Cell" strings.
+- A5: `DragController` has a serialized `returnToOrigin` option (default off). It records the start anchored position and parent on begin-drag, then restores the item over 0.18 s when it was released outside a slot, or snaps immediately when reduce motion is on. Enabled on all 96 akt6 `DragController` components; every other experiment keeps the field off.
+- A6: new `Assets/UI/Science/Scripts/UiPlaySoundOnEnable.cs` plays an Inspector-assigned clip when its object becomes active. `UiSound` now includes these owned sources in its mute pass. Cues: akt6 39 (28 drop, 10 step, 1 completion), akt3 21 (2/18/1), akt4 22 (9/12/1), akt5 14 (1/12/1), akt7 5 (2/3/0). Drop and step cues use `touchglass`; completion cards use `yay`. No new audio files were added.
+
+**Verification**
+
+- Play Mode, Dashboard at the 2000 x 1125 Game view: walked A2 L1 from page 1 to 14 by invoking its real Seterusnya buttons; every page indicator matched and the final Tamat returned to the hub. Walked A3 from page 1 to 4; Tamat returned to the hub. Captures: `Temp/qa_screens/scan/110-a2l1-p6.png`, `111-a2l1-p14.png`, `112-hub7-title.png`, `114-a2l1-p1.png`.
+- Play Mode, akt6: an invalid drag of `anodElektrod2` outside a slot moved it to (616.73, 233) and returned it to (296.73, 23). With reduce motion on it snapped; with reduce motion off the drag lift went 1.99 -> 2.14 -> 1.99 and the return completed on the next frame. A wrong electrode (`anodElektrod2` over the `anod` slot) left the parent, tick and cue unchanged and returned to its start. A real 2D trigger drop parented the matched item to `anod/image/collider2d (1)`, showed the tick, hid the slot cue and disabled its `DragController`. The tick played `touchglass`, a Seterusnya button played the pitch-shifted `touchglass`, and the `0 (10)` completion button played `yay`. With sound off the cue did not play and its AudioSource muted; turning sound back on unmuted it. PlayerPrefs were restored (reduce motion on, sound on).
+- Compile: no errors. Console after the runs contained the existing MCP WebSocket warning and the existing `onDrop`/`stuck` debug logs only.
+
+**Remaining**
+
+- A1 local progress and A9 scene fade are approved/deferred, not implemented.
+- A10 diagram labels still needs the owner or a teacher to supply the terms.
+- Not tested: physical mouse drags, the new A2 pages at the other five resolutions, the other scenes' cues by ear, and the standalone player.
