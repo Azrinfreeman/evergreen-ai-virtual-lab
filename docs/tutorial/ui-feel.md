@@ -22,6 +22,10 @@ The original revamp proposal ([UI_REVAMP_PLAN.md](../../UI_REVAMP_PLAN.md)) sugg
 | `Assets/UI/Science/Scripts/UiPlaySoundOnEnable.cs` | Plays an `AudioClip` when enabled (after the first `0.5 s` of scene load) |
 | `Assets/UI/Science/Scripts/QuizProgressPills.cs` | Updates the 5–6 question status pills (`Betul` / `Salah`) in `Uji Diri 1`–`7` |
 | `Assets/UI/Science/Scripts/UiActivityArrows.cs` | Shows `Aktiviti sebelum / berikut` only on Dashboard activity hubs and disables them at the ends |
+| `Assets/UI/Science/Scripts/UiProgress.cs` | Static local progress store (`PlayerPrefs` keys `ui.progress.<id>`) and `ResetAll()` |
+| `Assets/UI/Science/Scripts/UiProgressMarker.cs` | Sets one progress id complete when its finish object activates |
+| `Assets/UI/Science/Scripts/UiProgressBadge.cs` | Shows the "Selesai" chip on a Dashboard hub station when its id is complete |
+| `Assets/UI/Science/Scripts/UiProgressBadgeGroup.cs` | Refreshes every badge under the Dashboard `Into` object when it becomes active or a scene loads |
 | `Assets/UI/Science/Prefabs/LearningAssistant.prefab` | Shared persistent overlay (`CanvasPrime` / `LearningAssistant`) containing the brain button, `Tetapan` chip, chat box, and `TetapanPrompt` dialog |
 | `Assets/UI/Science/Sprites/SlotCue.png` | 9-sliced cyan frame (`#4FC3F7` border, faint cyan fill) used on `ItemSlot` images |
 | `Assets/DragController.cs` | Existing drag script extended with `returnToOrigin` and `returnDuration` |
@@ -94,6 +98,15 @@ The learner can open **Tetapan** from the chip directly under the top-right brai
 
 > **Testing tip:** If `UiDragLift` or `UiPopOnEnable` appears to do nothing in the Editor, open `Tetapan` in Play Mode (or check `PlayerPrefs.GetInt("ui.reduceMotion")`) and verify that `Kurangkan gerakan` is `Mati`.
 
+### Local progress ("Selesai" chips)
+
+Progress is saved per stage with an explicit id, `a{1-7}.belajar`, `a{1-7}.eksperimen` or `a{1-7}.ujidiri`. The id is set in the Inspector, not derived from scene or object names.
+
+- **Finish marker:** `UiProgressMarker` goes on the object that completes a stage (the last lesson button, the experiment's final button, or the quiz's result object). Set its `progressId`. It writes the id when it activates.
+- **Hub badge:** `UiProgressBadge` goes on each station's `ProgressBadge` under `Into/Content/N`. Its `progressId` must match the marker that completes that stage.
+- **Reset:** the "Set semula kemajuan" button in `Tetapan` calls `UiProgress.ResetAll()`, which clears all 21 ids and the keys from the first version.
+- **Hubs 1 and 2:** both lessons share one Belajar id (`a1.belajar`, `a2.belajar`), so finishing either lesson ticks that hub's Belajar station.
+
 ## 5. Non-Obvious Constraints and Contracts
 
 - **Never reorder or wrap gameplay children:**
@@ -116,3 +129,4 @@ The learner can open **Tetapan** from the chip directly under the top-right brai
 - **Not yet verified:**
   - Physical mouse/touch drag walkthroughs across all five experiments (quiz mouse/keyboard was verified by the owner).
   - Listening to audio cues in a standalone desktop player build (`Temp/ScienceUIBuild` needs to be rebuilt after the latest scene edits).
+  - Progress chips through real finish routes. Only `a6.eksperimen` and `a4.belajar` were checked, by activating the marker in Play Mode. The other ids were set by script.

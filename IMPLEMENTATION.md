@@ -143,7 +143,7 @@ The checkboxes in this section are the original plan and were mostly not ticked 
 | 3 Experiments | Done for akt3-akt7 | Step counters, slot cues, drag lift, completion chips; scripted drop checks on akt3, akt4, akt5, akt6 (pages `0 (2)`, `0 (3)`, `0 (4)`, `0 (8)`) and akt7. Open: akt6 pages handled by other scripts, real mouse drags, akt5 pages 4/6/8/11/`13 (1)` visual capture (measured only). |
 | 4 Quizzes | Done | All 7 quizzes scripted end to end; owner confirmed physical mouse/keyboard on the quizzes. Open: reduce-motion on, `QuitPrompt` visuals. |
 | 5 Overlays, dialogs, input | Mostly done | Assistant icon + shared "Tetapan" dialog (reduce motion, sound) in the prefab for all 13 scenes. Open: live assistant behaviour (separate service work), keyboard Tab order on the new stations. |
-| 6 Player and hand-off | Mostly done | Rebuilt `Temp/ScienceUIBuild/Evergreen.exe` (0 errors) and verified 1280x720 startup (0 log errors); 10/10 EditMode tests pass; `docs/tutorial/ui-feel.md`, `docs/ai/scene-map.md`, `docs/ai/script-map.md`, and the three human-editing paths are recorded below. Open: manual interactive playthrough inside the standalone `.exe`. |
+| 6 Player and hand-off | Open (rebuild needed) | The build recorded below (`Temp/ScienceUIBuild/Evergreen.exe`, 1280x720 startup, 10/10 EditMode tests) predates the A1 progress, A10 label, `ItemSlot` log-cleanup and akt6 Prestart changes, so it doesn't represent the current state. Rebuild, then run a manual playthrough (Login → Dashboard → lesson → experiment → quiz → retry → exit). `docs/tutorial/ui-feel.md` covers the components, progress ids and reset. The `docs/ai/` maps are local-only (excluded in `.git/info/exclude`). |
 
 Still outside this pass: A9 scene fade, the grayscale/colour-vision review, rendered hit-area checks, and listening to the sound cues.
 
@@ -943,3 +943,11 @@ The draft doc said "Bumi" (page `content (3)`) and "Turbin angin" / "Pengkomposa
 - `UiProgress`, `UiProgressMarker` and `UiProgressBadge` now use an explicit id set in the Inspector: `a{1-7}.belajar|eksperimen|ujidiri`. `ResetAll` clears all 21 ids plus the old scene-name keys. `ForceSceneName` and the scene-name logic are gone.
 - Assigned in the scenes: 21 Dashboard badges and 9 lesson markers (hub number from `Into/Content/N`), plus one marker each in akt3-akt7 (`aN.eksperimen`) and Uji Diri 1-7 (`aN.ujidiri`). Hubs 1 and 2 share one Belajar flag between their two lessons.
 - Verified in Play Mode: activating akt6's finish button wrote only `a6.eksperimen`; after loading the Dashboard exactly that one badge was visible. Completing a4's lesson marker showed only `a4.belajar`. `ResetAll` cleared it. No Console errors. Not verified: a real click-through to each finish route, the other 5 experiments and 6 quizzes by play (ids set by script), a restart.
+
+### Cleanup pass - 2026-11-12
+
+- `ItemSlot.cs`: removed all 31 active `Debug.Log` calls (`onDrop`, `stuck`, `anod`, `katod`, `anod2`, `katod2`), the 15 commented-out `stuck` lines, and the empty `else` that only logged. No logic changed. Compiles clean. Play Mode on akt6 page `0 (2)`: anod drop sets tick on, cue off, drag disabled, item parented to the slot; no Console output.
+- akt6 `Prestart Bahan2`: the grey panel (`Content`, sibling 1) was offset 1.5 units right of the white panel, which left a one-pixel step at the top-right and bottom-right. Set its x to 0 and saved the scene. Screenshot `Temp/qa_screens/scan/cleanup-prestart-notch-after.png` shows the edges aligned.
+- Not changed: akt6 page `0 (6)` electrode. Its `anodElektrod` already uses the apparatus sprite (`akatod_0`); the neon-green shape is a different object and needs a screenshot to locate. Asset-level electrode art does not exist in the project, so the fix needs an owner decision on the art.
+- `docs/tutorial/ui-feel.md`: added the four progress scripts, the progress-id section and the reset behaviour, and the progress checks still open.
+- Stage 6 status updated: the earlier build predates these changes, so a rebuild is needed.
