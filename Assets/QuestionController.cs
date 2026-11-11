@@ -25,7 +25,9 @@ public class QuestionController : MonoBehaviour
     [SerializeField] private Color correctAnswerColor = new Color32(221, 239, 225, 255);
     [SerializeField] private Color otherAnswerColor = new Color32(248, 231, 231, 255);
     [SerializeField] private TextMeshProUGUI feedbackLabel;
+    [SerializeField] private QuizProgressPills progressPills;
     private bool answerLayoutDirty = true;
+    private int pickedIndex = -1;
 
     void defaultAvatarFace()
     {
@@ -53,6 +55,7 @@ public class QuestionController : MonoBehaviour
     {
         countQuestion = 0;
         countStep = 0;
+        if (progressPills != null) progressPills.Setup(QuestionList.instance.questionlist.Count);
 
         Debug.Log(QuestionList.instance.questionlist[countQuestion].question[countStep]);
         applyQuestion();
@@ -61,8 +64,11 @@ public class QuestionController : MonoBehaviour
 
     private void applyQuestion()
     {
-        questionNumberTopLabel.text = "Soalan " + (countQuestion + 1);
+        questionNumberTopLabel.text =
+            "Soalan " + (countQuestion + 1) + " daripada " + QuestionList.instance.questionlist.Count;
         questionLabel.text = QuestionList.instance.questionlist[countQuestion].question[0];
+        pickedIndex = -1;
+        if (progressPills != null) progressPills.SetCurrent(countQuestion);
     }
 
     private void applyAnswerOnButton()
@@ -120,6 +126,8 @@ public class QuestionController : MonoBehaviour
         )
         {
             answerBtn[i].GetComponent<Button>().onClick.RemoveAllListeners();
+            int optionIndex = i;
+            answerBtn[i].GetComponent<Button>().onClick.AddListener(() => pickedIndex = optionIndex);
 
             answerBtn[i].GetChild(0).GetComponent<TextMeshProUGUI>().text = QuestionList
                 .instance
@@ -170,23 +178,31 @@ public class QuestionController : MonoBehaviour
     {
         answerLayoutDirty = true;
         if (feedbackLabel != null) feedbackLabel.text = "Jawapan betul ditandakan di bawah.";
+        int correctIndex = QuestionList
+            .instance
+            .questionlist[countQuestion]
+            .QuestionOnAnswersBtn[countStep]
+            .answeOnBtn;
+        if (progressPills != null) progressPills.Record(countQuestion, pickedIndex == correctIndex);
         for (int i = 0; i < answerBtn.Count; i++)
         {
-            if (
-                QuestionList
-                    .instance
-                    .questionlist[countQuestion]
-                    .QuestionOnAnswersBtn[countStep]
-                    .answeOnBtn == i
-            )
+            bool picked = i == pickedIndex;
+            UiFeedbackMotion motion = answerBtn[i].GetComponent<UiFeedbackMotion>();
+            TextMeshProUGUI label = answerBtn[i].GetChild(0).GetComponent<TextMeshProUGUI>();
+            if (i == correctIndex)
             {
                 answerBtn[i].GetComponent<Image>().color = correctAnswerColor;
-                TextMeshProUGUI label = answerBtn[i].GetChild(0).GetComponent<TextMeshProUGUI>();
-                label.text = "Betul: " + label.text;
+                label.text = (picked ? "Pilihan anda · Betul: " : "Betul: ") + label.text;
+                if (motion != null) motion.Pop();
             }
             else
             {
                 answerBtn[i].GetComponent<Image>().color = otherAnswerColor;
+                if (picked)
+                {
+                    label.text = "Pilihan anda: " + label.text;
+                    if (motion != null) motion.Wobble();
+                }
             }
         }
     }

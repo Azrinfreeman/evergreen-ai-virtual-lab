@@ -18,9 +18,10 @@ public class ItemSlot : MonoBehaviour, IDropHandler
     public Transform ButtonNext;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        tick = transform.GetChild(0).GetComponent<Transform>();
+        // Resolve early: physics triggers can fire before Start on a freshly enabled slot.
+        tick = transform.GetChild(0);
     }
 
     // Update is called once `r frame
