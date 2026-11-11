@@ -961,3 +961,9 @@ The draft doc said "Bumi" (page `content (3)`) and "Turbin angin" / "Pengkomposa
 - Confirmed the review's two medium typos were already fixed in `Dashboard.unity`.
 - Applied three mechanical fixes (double spaces on A1/A2 page 14 and page 13, a missing full stop on page 7). Scene saved.
 - Wording and science questions are listed as open decisions in `docs/curriculum-review-a2l1-a3.md`. They need teacher sign-off, not an automatic change.
+
+### Standalone rebuild - 2026-11-12
+
+- Rebuilt `Temp/ScienceUIBuild/Evergreen.exe` (StandaloneWindows64, Development, 14 enabled scenes) after the A1 progress, A10, cleanup and curriculum changes. Result: Succeeded, 0 errors.
+- Startup at 1280x720, windowed: process stayed running for 12 s on Unity 6000.6.7f1 / Direct3D 11. Log `Temp/qa_screens/windows-player-startup-2.log` has one matched line, the known Adaptive Performance "Initialization of Provider" notice, and no exceptions.
+- Not done: the interactive playthrough (Login → Dashboard → lesson → experiment → quiz → retry → exit) with mouse and keyboard. This still needs a person at the keyboard.
