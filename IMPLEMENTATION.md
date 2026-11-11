@@ -951,3 +951,7 @@ The draft doc said "Bumi" (page `content (3)`) and "Turbin angin" / "Pengkomposa
 - Not changed: akt6 page `0 (6)` electrode. Its `anodElektrod` already uses the apparatus sprite (`akatod_0`); the neon-green shape is a different object and needs a screenshot to locate. Asset-level electrode art does not exist in the project, so the fix needs an owner decision on the art.
 - `docs/tutorial/ui-feel.md`: added the four progress scripts, the progress-id section and the reset behaviour, and the progress checks still open.
 - Stage 6 status updated: the earlier build predates these changes, so a rebuild is needed.
+
+### Page 0 (6) electrode follow-up - 2026-11-12
+
+- Play Mode screenshot `Temp/qa_screens/scan/cleanup-page06.png` shows no neon-green rectangle. The drop target is the cyan `SlotCue` frame (Phase 3.2), which is the intended outline. The electrode and wire use the existing apparatus art. The earlier note came from before the slot-cue change, so it is resolved and no art change is needed.
