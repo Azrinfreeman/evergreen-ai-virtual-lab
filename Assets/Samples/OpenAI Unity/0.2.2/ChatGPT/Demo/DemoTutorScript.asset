@@ -1,0 +1,142 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 884b9f06cf208dd479b20f5fb8e9cf24, type: 3}
+  m_Name: DemoTutorScript
+  m_EditorClassIdentifier: Evergreen.TutorDemo::Evergreen.TutorDemo.DemoTutorScript
+  topics:
+  - behaviourKey: MM4
+    entries:
+    - keywords:
+      - gfp
+      - pendarfluor
+      - tujuan
+      - objektif
+      - apa itu eksperimen
+      answer: Dalam eksperimen ini, gen Protein Pendarfluor Hijau (GFP) dimasukkan ke dalam vektor plasmid pUC19. Langkah-langkahnya ialah pencernaan enzim sekatan, pengikatan, transformasi dan pengesahan oleh PCR.
+      source: akt4 Welcome/Tujuan text; tablePrompts MM4
+    - keywords:
+      - enzim
+      - sekatan
+      - xbai
+      - xbal
+      - hindiii
+      - potong
+      - cerna
+      - pencernaan
+      answer: "Enzim sekatan (XbaI dan HindIII dalam makmal ini) memotong DNA pada tapak tertentu. Plasmid dan sisipan GFP dicerna dahulu sebelum disambungkan. Setiap enzim digunakan sebanyak 1 \xB5L bersama penampan sekatan 10X."
+      source: akt4 page 2 quantities (Xbal 1 uL, HindIII 1 uL, 10X penampan Sekatan)
+    - keywords:
+      - ligase
+      - ligasi
+      - ikat
+      - pengikatan
+      - t4
+      - sambung
+      answer: "Pengikatan (ligasi) menyambung sisipan GFP ke dalam plasmid yang telah dicerna. Makmal ini menggunakan T4 DNA Ligase 1 \xB5L dan penampan ligase 10X 2 \xB5L."
+      source: akt4 ligation page (T4 DNA Ligase 1 uL, 10X penampan Ligase 2 uL)
+    - keywords:
+      - transformasi
+      - kejutan
+      - haba
+      - heat shock
+      - masukkan plasmid
+      answer: "Transformasi ialah langkah memasukkan plasmid ke dalam sel bakteria, dan Kejutan Haba ialah sebahagian daripada langkah ini. Selepas itu, 100 \xB5L campuran disebarkan ke atas plat agar."
+      source: akt4 step names (Transformasi, Kejutan Haba); plating page
+    - keywords:
+      - ampicillin
+      - ampisilin
+      - plat
+      - agar
+      - inkubasi
+      - semalaman
+      - koloni
+      - saringan
+      answer: "Campuran disebarkan ke atas plat agar LB dengan ampicillin, kemudian diinkubasi semalaman pada suhu 37 \xB0C. Selepas itu, koloni disaring dalam langkah Saringan Koloni."
+      source: akt4 plating page text; step name Saringan Koloni
+    - keywords:
+      - pcr
+      - pengesahan
+      - sahkan
+      - polymerase
+      answer: PCR (polymerase chain reaction) digunakan untuk pengesahan, iaitu menyemak hasil pengklonan selepas transformasi.
+      source: akt4 Tujuan text
+    fallback: Saya boleh terangkan eksperimen Pengklonan ini. Cuba tanya tentang gen GFP, enzim sekatan, pengikatan (ligasi), transformasi, plat agar atau pengesahan PCR.
+  - behaviourKey: MM3
+    entries:
+    - keywords:
+      - tujuan
+      - objektif
+      - bakteria
+      - kultur
+      - agar
+      - nutrien
+      answer: Eksperimen ini bertujuan mengkultur dua jenis bakteria yang berbeza menggunakan agar-agar nutrien.
+      source: tablePrompts MM3
+    fallback: Saya boleh terangkan eksperimen Penkulturan Bakteria. Cuba tanya tentang tujuan eksperimen atau agar-agar nutrien.
+  - behaviourKey: MM5
+    entries:
+    - keywords:
+      - tujuan
+      - objektif
+      - merkuri
+      - mercuri
+      - pencemar
+      answer: Eksperimen ini bertujuan menganalisis kehadiran bahan pencemar merkuri dalam produk kecantikan dan kesihatan.
+      source: tablePrompts MM5
+    fallback: Saya boleh terangkan eksperimen Pengujian Merkuri. Cuba tanya tentang tujuan eksperimen ini.
+  - behaviourKey: MM6
+    entries:
+    - keywords:
+      - tujuan
+      - objektif
+      - mfc
+      - fuel cell
+      - mikrobial
+      - sel bahan bakar
+      answer: Eksperimen ini membimbing pelajar melalui langkah-langkah membuat sel bahan bakar mikrob (microbial fuel cell, MFC).
+      source: tablePrompts MM6
+    fallback: Saya boleh terangkan eksperimen sel bahan bakar mikrob (microbial fuel cell, MFC). Cuba tanya tentang tujuan eksperimen ini.
+  - behaviourKey: MM7
+    entries:
+    - keywords:
+      - tujuan
+      - objektif
+      - filem
+      - getah
+      - rubber
+      answer: Eksperimen ini berkaitan dengan Teknologi Filem Getah (rubber film).
+      source: tablePrompts MM7
+    fallback: Saya boleh terangkan eksperimen Filem Getah. Cuba tanya tentang eksperimen ini.
+  - behaviourKey: Akt1
+    entries:
+    - keywords:
+      - stem
+      - uji diri
+      - ujian
+      answer: Aktiviti 1 ialah Apakah STEM. Anda juga boleh mencuba Uji Diri, iaitu ujian soalan aneka pilihan dalam permainan ini.
+      source: tablePrompts Akt1
+    fallback: Saya boleh terangkan Aktiviti 1. Cuba tanya apa itu STEM atau tentang Uji Diri.
+  genericFallback: Saya boleh membantu dengan soalan sains berkaitan aktiviti atau eksperimen yang sedang anda buka. Cuba tanya tentang tujuan eksperimen itu.
+  declineEntries:
+  - keywords:
+    - piala dunia
+    - bola sepak
+    - artis
+    - lagu
+    - politik
+    - cuaca
+    - harga
+    - resipi
+    answer: Maaf, saya hanya boleh menjawab soalan berkaitan sains. Cuba tanya tentang aktiviti atau eksperimen yang sedang dipilih.
+    source: 
+  thinkingSeconds: 0.8
+  notice: 'Mod demo: jawapan contoh, bukan daripada model AI.'
