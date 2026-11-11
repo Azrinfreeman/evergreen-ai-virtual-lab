@@ -780,7 +780,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Makmal Maya 3: Penkulturan Bakteria \n(Cara A: Agar-agar nutrien)"
+  m_text: "Makmal Maya 3: Pengkulturan Bakteria \n(Cara A: Agar-agar nutrien)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -33900,6 +33900,7 @@ GameObject:
   - component: {fileID: 888259190}
   - component: {fileID: 888259195}
   - component: {fileID: 888259194}
+  - component: {fileID: 888259196}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -34055,6 +34056,19 @@ MonoBehaviour:
   m_EffectColor: {r: 0.043137256, g: 0.043137256, b: 0.23137255, a: 1}
   m_EffectDistance: {x: 1.5, y: -1.5}
   m_UseGraphicAlpha: 1
+--- !u!114 &888259196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888259188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c985c140c635c040aea60aef572ec61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UiProgressMarker
+  progressId: a3.eksperimen
 --- !u!1 &894653843
 GameObject:
   m_ObjectHideFlags: 0
@@ -38872,7 +38886,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Makmal Maya 3: Penkulturan Bakteria \n"
+  m_text: "Makmal Maya 3: Pengkulturan Bakteria \n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -39459,7 +39473,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Makmal Maya 3: Penkulturan Bakteria \n(Cara A: Agar-agar nutrien)"
+  m_text: "Makmal Maya 3: Pengkulturan Bakteria \n(Cara A: Agar-agar nutrien)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

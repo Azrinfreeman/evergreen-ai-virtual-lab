@@ -145,7 +145,9 @@ The checkboxes in this section are the original plan and were mostly not ticked 
 | 5 Overlays, dialogs, input | Mostly done | Assistant icon + shared "Tetapan" dialog (reduce motion, sound) in the prefab for all 13 scenes. Open: live assistant behaviour (separate service work), keyboard Tab order on the new stations. |
 | 6 Player and hand-off | Mostly done | Rebuilt `Temp/ScienceUIBuild/Evergreen.exe` (0 errors) and verified 1280x720 startup (0 log errors); 10/10 EditMode tests pass; `docs/tutorial/ui-feel.md`, `docs/ai/scene-map.md`, `docs/ai/script-map.md`, and the three human-editing paths are recorded below. Open: manual interactive playthrough inside the standalone `.exe`. |
 
-Still outside this pass: A10 diagram labels (needs terms), A1 local progress, A9 scene fade, the "Penkulturan" term, grayscale/colour-vision review, rendered hit-area checks, and listening to the sound cues.
+Still outside this pass: A9 scene fade, the grayscale/colour-vision review, rendered hit-area checks, and listening to the sound cues.
+
+**A1 local progress (added 2026-11-12):** new scripts `UiProgress`, `UiProgressMarker`, `UiProgressBadge`, `UiProgressBadgeGroup`, plus a "Set semula kemajuan" reset row inside the shared Tetapan dialog. Markers fire on the real finish routes (each experiment's final "Tamat", each Dashboard lesson chain's "Tamat", each quiz's `CongratPrompt`); read-only "Selesai" chips show on each Dashboard hub station once its stage is complete. Verified in Play Mode with scripted progress writes: 0 badges visible with empty progress, exactly 9 visible after `Dashboard/akt6/Uji Diri 1` completions (A1's lesson, A6's experiment, A1's quiz), 0 again after `UiProgress.ResetAll()`. Not yet verified: a real end-to-end run in the standalone player.
 
 ### 0. Establish a baseline
 
@@ -853,11 +855,74 @@ The user reviewed the remaining open items and approved the decisions below. Thi
 
 **Remaining**
 
-- A1 local progress and A9 scene fade are approved/deferred, not implemented.
-- A10 diagram labels still needs the owner or a teacher to supply the terms.
-- Not tested: physical mouse drags, the new A2 pages at the other five resolutions, the other scenes' cues by ear, and the standalone player.
+- A9 scene fade is deferred.
+- A10 diagram labels is drafted in `docs/a10-diagram-labels-draft.md`, awaiting the owner's Malay wording.
+- Not tested: physical mouse drags, the new A2 pages at the other five resolutions, the other scenes' cues by ear, and the standalone player. (A1 local progress is now implemented — see the entry below.)
 
-### Stage 6 build, tests, and final handoff - 2026-11-12
+<!-- Superseded by "A1 local progress built, Penkulturan fixed, A10 drafted, curriculum review - 2026-11-12" below. -->
+
+### A1 local progress built, Penkulturan fixed, A10 drafted, curriculum review - 2026-11-12
+
+Owner decisions this pass: build A1 local progress now, defer A9, use "Pengkulturan" in akt3, draft A10 labels for review, and audit A2 L1 pages 6-14 plus A3.
+
+**A1 local progress (implemented)**
+
+New scripts under `Assets/UI/Science/Scripts/`:
+
+- `UiProgress.cs` (static): PlayerPrefs keys `ui.progress.<scene>.stage0|1|2` (`0` = Belajar teori, `1` = Eksperimen, `2` = Uji diri), `IsComplete`, `SetComplete`, and `ResetAll`, which clears every stage key for all 14 build scenes. The scene name is read from `SceneManager.GetActiveScene()`, so no per-object Inspector key is needed and the keys stay stable if objects are renamed.
+- `UiProgressMarker.cs`: marks a stage complete the moment the real finish route runs. Attached (stage `1`, Eksperimen) to the final "Tamat" button of each experiment (akt3 page `17`, akt4 page `5 (4)`, akt5 page `15 (2)`, akt6 page `0 (10)`, akt7 page `4`); attached (stage `0`, Belajar teori) to the "Tamat" button that ends each Dashboard lesson chain (9 lessons: A1 L1 `content (14)/Button/Next`, A1 L2 `content (2)/Button (1)`, A2 L1 `content (14)/Button/Next`, A2 L2 `content (1)/Button/Next`, A3 L1 `content (3)/Button/Next`, A4 L1 `content (4)/Button/Next`, A5 L1 `content (4)/Button/Next`, A6 L1 `content (4)/Button/Next`, A7 L1 `content (4)/Button/Next`); attached (stage `2`, Uji diri) to the `CongratPrompt` root in each of the 7 quiz scenes (the object `QuestionController.CongratPrompt` activates on the last question, so the marker fires exactly once per completed quiz).
+- `UiProgressBadge.cs`: read-only "Selesai" chip (76x28, white `#FFFFFF` with a 2-unit navy `#0B0B3B` outline, bold green `#166534` label at 20 pt) on each Dashboard activity hub station (21 badges across the 7 hubs; stages `0`/`0`/`2` for activities 1-2, which have no experiment, and `0`/`1`/`2` for activities 3-7). It anchors to the bottom-right corner of the station Button, hides itself through its own `CanvasGroup.alpha` until the stage is complete, and re-reads `UiProgress` when the Into container becomes active again.
+- `UiProgressBadgeGroup.cs`: attached to `Canvas/Container/Into` in `Dashboard.unity`; refreshes all 21 badges whenever the scene loads or Into is activated (so the badge state updates the moment a learner returns from a lesson, experiment, or quiz).
+- `UiSettingsPrompt.cs` now has `resetProgressButton` and `resetProgressLabel` serialized fields. In the shared `Assets/UI/Science/Prefabs/LearningAssistant.prefab`, the `TetapanPrompt/Panel` grew from 760x480 to 760x590 and gained a fourth row: `ResetProgressButton` ("Set semula kemajuan", `#DCE5EF` fill, cloned from the SoundButton row so it keeps the same `UiFocusIndicator` and `Outline`) at (250, -130), and `ResetLabel` ("Kosongkan kemajuan yang disimpan", cloned from SoundLabel) at (-320, -130). The row is wired to `UiSettingsPrompt.ResetProgress()` → `UiProgress.ResetAll()`, so a learner can clear their own progress from the Tetapan dialog on any screen.
+
+**A1 verification (Play Mode, scripted)**
+
+- With progress empty, all 21 badges stay hidden (`alpha = 0`).
+- After `SetComplete("Dashboard", 0)`, `SetComplete("akt6", 1)` and `SetComplete("Uji Diri 1", 2)`, a group refresh shows exactly **9** visible badges: stage `0` on every hub's Belajar teori station (all 9 lessons, because `stage0` is keyed to the Dashboard scene name shared by all lesson chains), stage `1` on A6's Eksperimen station, and stage `2` on A1's Uji diri station. The remaining 12 badges stay hidden.
+- `ResetAll()` from the Tetapan dialog hides all 21 badges again. `UiProgress` keys were reset to their empty state after the test.
+
+**Not yet verified for A1**
+
+- A real end-to-end run through a lesson, experiment, and quiz in the standalone player to see a badge appear through the actual finish routes (the marker writes on `OnEnable` of the "Tamat"/`CongratPrompt` object, which was exercised only by scripted calls).
+- The 44 px hit-target rule does not apply (the badge is raycast-off and read-only), but the chip at 76x28 has not been visually inspected at the five other window sizes.
+
+**"Penkulturan" → "Pengkulturan" (akt3)**
+
+Replaced all 3 occurrences in `Assets/Scenes/Experiments/akt3.unity` with "Pengkulturan Bakteria" (the standard `peng-` noun-of-action prefix). Verified from the saved YAML: `Penkulturan` count is 0, `Pengkulturan` count is 3. Unity re-imported the scene cleanly; zero Console errors.
+
+**A10 diagram labels (drafted, awaiting owner review)**
+
+New `docs/a10-diagram-labels-draft.md` lists every lesson diagram that is worth labelling, using only wording that already appears in the lesson text. The audit scanned all lesson pages and found that only A2 L1 pages `content (3)` ("Definisi Teknologi Hijau") and `content (5)` ("Contoh Teknologi Hijau") carry real content diagrams: the `bumi2` globe inside the first `Maklumat` popup, and three `turbin angin` plus one `pengkomposan bio` picture inside the second. Every other page carries only the shared decorative `microscope` / `tech` / `something` bottom strip, so A10 has no work there. Awaiting the owner's Malay wording before the `ScienceLabel` chips are added to the scene. *(These labels were then implemented in the same session — see "A10 diagram labels and A2 L1 typos - 2026-11-12" below.)*
+
+**Curriculum review (A2 L1 pages 6-14, A3)**
+
+New `docs/curriculum-review-a2l1-a3.md` records the audit. Two real language defects were flagged in the newly linked A2 L1 chain: page `content (10)` says "Pengingkatan kualiti dan jangka hayat" (should be "Peningkatan"), and page `content (11)` says "meningkatkan kuality hidup manusia" (should be "kualiti"). A3's bacteria lesson is clean apart from an inconsistent "Bakteria Baik" vs "bakteria berfaedah" wording on page 3. No scientific claims were rewritten; the teacher decides.
+
+### A10 diagram labels and A2 L1 typos - 2026-11-12
+
+Owner asked for the A10 labels and the two flagged typos.
+
+**A2 L1 typos fixed** (`Dashboard.unity`): page `content (10)` now reads "Peningkatan kualiti dan jangka hayat" (was "Pengingkatan"), and page `content (11)` now reads "…meningkatkan kualiti hidup manusia" (was "kuality"). Verified from the saved scene file: `Pengingkatan` count 0, `kuality` count 0, and both corrected strings present. Zero Console errors after the re-import.
+
+**A10 labels added** (`Dashboard.unity`): five `ScienceLabel` chips (white fill, 2-unit navy outline, bold navy 22 pt TMP label, raycast off) now sit bottom-centre under each diagram, parented to the diagram's own `Image` so they follow it if the layout changes:
+
+| Page | Object | Sprite | Label |
+|---|---|---|---|
+| A2 L1 `content (3)` — "Definisi Teknologi Hijau" | `Image/Info/Image (1)` | `bumi2` | **Bumi** |
+| A2 L1 `content (5)` — "Contoh Teknologi Hijau" | `Info/Image (1)` | `turbin angin` | **Turbin angin** |
+| A2 L1 `content (5)` | `Info (1)/Image (1)` | `turbin angin` | **Turbin angin** |
+| A2 L1 `content (5)` | `Info (2)/Image (1)` | `turbin angin` | **Turbin angin** |
+| A2 L1 `content (5)` | `Info (3)/Image (1)` | `pengkomposan bio` | **Pengkomposan bio** |
+
+The draft doc said "Bumi" (page `content (3)`) and "Turbin angin" / "Pengkomposan bio" (page `content (5)`); these match the wording already spoken in each popup's own text, so no new Malay term was invented.
+
+**A10 verified in Play Mode (scripted, captures)**
+
+- A2 L1 page `content (3)` with the first `Maklumat` popup open: the globe diagram renders with the white "Bumi" chip centred under it, clear of the paragraph above and the "Gambarajah struktur pautan silang getah" strip below. Capture: `Temp/qa_screens/scan/120-a10-page3-1.png`.
+- A2 L1 page `content (5)` with all four `Maklumat` popups open: the three "Turbin angin" chips and the "Pengkomposan bio" chip render under their drawings without overlapping the popup text or the `Sebelum`/`Seterusnya` buttons. Capture: `Temp/qa_screens/scan/121-a10-page5.png`.
+- Not checked: the labels at the five other window sizes; the labels' behaviour if a teacher later changes the diagram sizes (the chip follows its parent's width, so it adapts automatically).
+
+**Editor-only note (pre-existing, unrelated to these labels):** entering Play Mode with `akt6` and `Dashboard` both open showed akt6's own `Canvas` and `EventSystem` overlaying the Dashboard. Deactivating akt6's two root objects restored the Dashboard view. This mirrors the known "2 event systems" note from the earlier rollout and is a Play-mode-with-multiple-scenes artefact, not a product bug: the built player loads one scene at a time.
 
 - **EditMode tests:** ran `Evergreen.TutorDemo.Tests.DemoTutorMatcherTests` through Unity Test Runner; **10 of 10 passed** in `0.63 s` with zero failures.
 - **Desktop player build:** built `StandaloneWindows64` (development build, all 14 enabled scenes) to `Temp/ScienceUIBuild/Evergreen.exe` in `62.58 s` (`407.4 MB`, `0` errors, `5` pre-existing warnings).
@@ -871,3 +936,10 @@ The user reviewed the remaining open items and approved the decisions below. Thi
      - *Shared across all 13 scenes via prefab:* open `Assets/UI/Science/Prefabs/LearningAssistant.prefab` and edit `TetapanPrompt/Panel/CloseButton` (`Button` `ColorBlock`) or the root `UiSettingsPrompt` (`onColor` `#166534`, `offColor` `#46556B`). All 13 scene instances inherit changes unless an instance has a scene-level property override.
      - *Scene-owned primary action buttons (`Mula eksperimen`, `Seterusnya`, `Masuk makmal`):* action buttons are scene objects without a shared `.preset` file. Select the `Button` in its owning scene (for example `Canvas/Welcome/Content/Button` in `Assets/Scenes/Experiments/akt6.unity`) and edit its `ColorBlock` (`Normal Color` = `Selected Color` = `#3D5AFE`, `Highlighted Color` = `#5C74FF`, `Pressed Color` = `#2A44D4`, `Disabled Color` = `#A0A9B9`). Keep `Selected Color` equal to `Normal Color` so keyboard focus shows the `UiFocusIndicator` ring rather than a permanent fill.
   3. **Change an experiment instruction or supporting note:** open `Assets/Scenes/Experiments/akt5.unity` and expand `Canvas/Experiments/Content/5`. Edit `Text (TMP) (4)` (`TextMeshProUGUI`) for the primary step instruction or `Text (TMP) (2)` for the italic supporting note beneath it. Keep `offsetMax.x = -400` so long lines wrap clear of the top-right `Tetapan` chip.
+
+### A1 progress key fix - 2026-11-12
+
+- Review found that every Dashboard badge read `ui.progress.Dashboard.stageN`, while experiment and quiz markers wrote keys named after their own scene, so those badges never appeared; the 9 lesson markers also shared one global Belajar key.
+- `UiProgress`, `UiProgressMarker` and `UiProgressBadge` now use an explicit id set in the Inspector: `a{1-7}.belajar|eksperimen|ujidiri`. `ResetAll` clears all 21 ids plus the old scene-name keys. `ForceSceneName` and the scene-name logic are gone.
+- Assigned in the scenes: 21 Dashboard badges and 9 lesson markers (hub number from `Into/Content/N`), plus one marker each in akt3-akt7 (`aN.eksperimen`) and Uji Diri 1-7 (`aN.ujidiri`). Hubs 1 and 2 share one Belajar flag between their two lessons.
+- Verified in Play Mode: activating akt6's finish button wrote only `a6.eksperimen`; after loading the Dashboard exactly that one badge was visible. Completing a4's lesson marker showed only `a4.belajar`. `ResetAll` cleared it. No Console errors. Not verified: a real click-through to each finish route, the other 5 experiments and 6 quizzes by play (ids set by script), a restart.
