@@ -131,6 +131,22 @@ Use existing state changes/events for new presentation updates instead of adding
 
 Implement sequentially. Each stage requires its own inspection, a small reviewable change, saved assets, and the listed evidence before moving on. Keep existing user edits intact; the working tree already contains package/settings/sample-script changes and untracked documentation/screenshots.
 
+### Status reconciliation - 2026-11-12
+
+The checkboxes in this section are the original plan and were mostly not ticked as work landed. Use this table, which is based on the Progress and evidence entries below, as the current status. "Scripted" means Play Mode with synthetic events, not physical input.
+
+| Stage | Status | Evidence / what is open |
+|---|---|---|
+| 0 Baseline | Done | Stage 0 findings (2026-11-09) and the 2026-11-10 scan in `Temp/qa_screens` (temporary files). |
+| 1 First slice (akt4 + Dashboard) | Done, reviewed by owner | akt4 slices and the 2026-11-09 akt4 pass. Full six-size matrix was not run for every page. |
+| 2 Entry, activities, lessons | Done | Login, Dashboard cards, three-station hubs, page indicators (49 pages), A2 L1 relinked 1-14, A3 orphans removed. Open: curriculum review of A2 L1 pages 6-14; sizes other than 1920x1080 for the newer pages. |
+| 3 Experiments | Done for akt3-akt7 | Step counters, slot cues, drag lift, completion chips; scripted drop checks on akt3, akt4, akt5, akt6 (pages `0 (2)`, `0 (3)`, `0 (4)`, `0 (8)`) and akt7. Open: akt6 pages handled by other scripts, real mouse drags, akt5 pages 4/6/8/11/`13 (1)` visual capture (measured only). |
+| 4 Quizzes | Done | All 7 quizzes scripted end to end; owner confirmed physical mouse/keyboard on the quizzes. Open: reduce-motion on, `QuitPrompt` visuals. |
+| 5 Overlays, dialogs, input | Mostly done | Assistant icon + shared "Tetapan" dialog (reduce motion, sound) in the prefab for all 13 scenes. Open: live assistant behaviour (separate service work), keyboard Tab order on the new stations. |
+| 6 Player and hand-off | Open | No desktop build exists (`Temp/ScienceUIBuild` is gone); needs a rebuild and a Login to quiz smoke test. Hand-off guide is `docs/tutorial/ui-feel.md`. |
+
+Still outside this pass: A10 diagram labels (needs terms), A1 local progress, A9 scene fade, the "Penkulturan" term, grayscale/colour-vision review, rendered hit-area checks, and listening to the sound cues.
+
 ### 0. Establish a baseline
 
 - [ ] Inspect the active Editor/version, current desktop build profile, loaded scenes, unsaved changes, and Console state. Do not save or discard unrelated scene edits.

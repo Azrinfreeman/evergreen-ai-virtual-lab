@@ -1,6 +1,6 @@
 # Evergreen STEM VirtualLab — UI and Game-Feel Revamp Proposal
 
-Status: **proposal only, nothing implemented.** Written 2026-11-10 after a full Play Mode scan. No scene, prefab, or C# file was changed while writing it. The evidence log for work already done remains [IMPLEMENTATION.md](IMPLEMENTATION.md); this document proposes the next layer on top of it. Owner approval is required before any phase starts, and items marked **Needs approval** also conflict with, or extend, [AGENTS.md](AGENTS.md).
+Status (2026-11-12): **Phases 1 to 4 are implemented**, with the deviations recorded in [IMPLEMENTATION.md](IMPLEMENTATION.md) (for example text-only cards, no hover lift, the "Pembantu" label replaced by "Tetapan"). Phase 5 is partly done: the guide is at `docs/tutorial/ui-feel.md`; the full verification matrix, a desktop build smoke test, and the approvals A1, A9, A10 remain open. The checkboxes below were not ticked as work landed, so read the evidence log, not the boxes. Originally written 2026-11-10 after a full Play Mode scan as a proposal. Owner approval is required before any phase starts, and items marked **Needs approval** also conflict with, or extend, [AGENTS.md](AGENTS.md).
 
 Audience: learners around 16 years old. Target feel: a real working lab that is professional enough to trust and responsive enough to be fun. "Fun" here means the interface reacts clearly to what the learner does. It does not mean decoration.
 
