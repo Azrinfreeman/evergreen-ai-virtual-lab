@@ -1,6 +1,6 @@
 # Evergreen player-journey teaser — implementation plan
 
-Updated: 2026-11-12. **New teaser: execution started; the chat uses the scripted demo tutor (owner decision), so no OpenAI account is needed.** The user authorized starting this plan. Current verification and production evidence is recorded under [Status and human editing guide](#status-and-human-editing-guide); unchecked tasks remain unfinished.
+Updated: 2026-11-12. **First local cut rendered: 74.2 seconds; final review remains open.** The chat uses the scripted demo tutor (owner decision), so no OpenAI account is needed. Current verification and production evidence is recorded under [Status and human editing guide](#status-and-human-editing-guide); unchecked tasks remain unfinished.
 
 **Goal:** Make a new teaser that shows how a learner actually uses Evergreen, with the built-in AI tutor chat (scripted demo replies, no OpenAI account) as the main feature and lessons, experiments, and quizzes as the connected learning journey.
 
@@ -18,7 +18,7 @@ This proposal governs the **new teaser only**. The earlier plan and production n
 - Target: **65 seconds**, 1920 × 1080, 60 fps, landscape. Allow up to 75 seconds if genuine reply text needs more reading time; shorten secondary shots before shortening chat readability.
 - Language: Malay captions and existing Malay UI. Working line: **“Belajar. Cuba. Tanya. Uji diri.”**
 - Style: Evergreen navy, blue, cyan, existing laboratory imagery and typography. Real cursor movement, readable screen holds, straight cuts and short fades. Modest crops draw attention to apparatus and chat after establishing the full screen.
-- Chat receives approximately **30 seconds of 65**. Show opening the assistant, typing, sending, pending state, an answer, and one follow-up. The learner then closes it and resumes the lab.
+- The first cut gives chat **41.2 seconds of 74.2**, including opening, typing, sending, pending states, both scripted replies and the follow-up. The learner then closes it and resumes the lab.
 - Keep narration out of the first cut so viewers can read the app. Use music and restrained action sounds; the complete story must also work muted.
 - Include login/entry briefly, activity choice, a lesson, real apparatus interaction, chatbot, return to the task, and quiz feedback/score. Settings and completion indicators can appear naturally; they do not need separate feature cards.
 - No developer architecture segment, code/Inspector footage, decorative scientific graphics, generated gameplay, new app features, backend work, or release/publishing changes in this scope.
@@ -56,28 +56,28 @@ Existing unrelated local changes include project settings, TMP font data, adapti
 
 Use a plain **“Pembantu pembelajaran · Jawapan demo”** editorial label during the chat segment. The closing qualifier must state **“Jawapan pembantu dalam video ini ialah contoh berskrip (mod demo). Sambungan OpenAI memerlukan kunci anda sendiri.”** Repeat the distinction in the eventual delivery description. Give the qualifier at least four readable seconds; extend the end card if the preview shows it needs more time.
 
-## Proposed running order
+## First-cut running order
 
-Times are editing targets, not capture durations. Record generous handles around each action. Capture the underlying route continuously where practical; the final edit may visibly omit navigation and waiting.
+These are the implemented edit timings, not capture durations. Source in/out points are editable in `TEASER_SHOTS`; the continuous underlying take and event marks are preserved separately. Navigation is visibly cut; both pending response intervals remain at normal speed.
 
 | Time | Player action and framing | Proposed Malay caption / purpose |
 |---|---|---|
-| 00–03 | Strong apparatus action with a small Evergreen title, then a short view of the assistant opening. An opening preview, not an invented state. | “Makmal sains maya dengan pembantu pembelajaran” — establish the product and hero feature immediately. |
-| 03–07 | Enter the lab from LoginPage; full Dashboard, then select Aktiviti 4. No invented sign-in or registration. | “Pilih aktiviti” |
-| 07–11 | Open the relevant lesson; hold one useful diagram/procedure heading, then choose the experiment. | “Fahami konsepnya” |
-| 11–19 | Full workspace first, then readable close view of one or two real drag/drop actions and actual completion feedback. | “Cuba sendiri, langkah demi langkah” |
-| 19–25 | Open the assistant over the same activity, focus the input, type question one and send. Keep the question readable. | “Perlukan penjelasan? Tanya pembantu.” |
-| 25–37 | Pending state, then the scripted answer as the app returns it. Crop toward the chat while preserving enough workspace to orient the viewer. Hold/scroll the complete answer. | “Pembantu pembelajaran · Jawapan demo”; avoid competing text over the reply. |
-| 37–49 | Type/send the related follow-up, show its pending state and full returned answer. Hold for reading. | “Teruskan dengan soalan susulan” |
-| 49–54 | Close chat and continue the actual procedure; show real next-step feedback. | “Kembali ke eksperimen” — demonstrate that help fits into play. |
-| 54–61 | Navigate to Uji Diri 4, show one question, a deliberate learner choice, marked answer and actual score change. | “Uji kefahaman anda” — no fabricated final result or completion badge. |
-| 61–65 | Evergreen title, “Belajar. Cuba. Tanya. Uji diri.”, project location and the demo-answers qualifier above. | Calm closing hold. Extend if the qualifier or URL is too small/brief. |
+| 00–02 | Apparatus action as an opening preview of the later interaction. | “Makmal sains maya · Evergreen STEM” |
+| 02–07 | Enter from LoginPage; full Dashboard, then select Aktiviti 4. | “Masuk makmal” / “Pilih aktiviti” |
+| 07–09.5 | Hold the cloning lesson's reading page. | “Fahami konsepnya” |
+| 09.5–15.5 | Full workspace and first real label drag/drop. | “Cuba sendiri, langkah demi langkah” |
+| 15.5–26.9 | Open the assistant, type/send question one and retain the pending state. | “Perlukan penjelasan? Tanya pembantu.” |
+| 26.9–39.9 | Crop toward the complete first scripted answer and visible demo notice. | “Pembantu pembelajaran · Jawapan demo” |
+| 39.9–56.7 | Type/send the follow-up, retain its pending state and hold the complete second answer. | “Teruskan dengan soalan susulan” / “Pembantu pembelajaran · Jawapan demo” |
+| 56.7–62.2 | Resume the second label drop and show real step-complete feedback. | “Kembali ke eksperimen” |
+| 62.2–69.2 | A deliberate answer in Uji Diri 4, marked feedback and genuine score change. | “Uji kefahaman anda” |
+| 69.2–74.2 | Evergreen title, project location, working line and scripted-demo disclosure. | “Belajar. Cuba. Tanya. Uji diri.” |
 
 The two chat replies must fit a comfortable reading pace, initially budgeted at no more than about three Malay words per second. Measure the selected text and extend the holds when needed. Do not rush the typing or answers to match a music bar. If the two-turn exchange cannot fit within 75 seconds, return with a revised timing proposal before dropping the follow-up.
 
 ## File ownership and planned changes
 
-New paths below remain **proposed future work** except the QA smoke recording recorded in the status section. `Drive.ps1` has been updated; the new composition and production take script have not been created. Keep the old trailer and loop intact.
+The capture script, transcript and new composition below now exist. Export/review status is recorded in the latest execution evidence; the original trailer and loop remain intact.
 
 | File / location | Planned responsibility |
 |---|---|
@@ -89,6 +89,7 @@ New paths below remain **proposed future work** except the QA smoke recording re
 | New `trailer/edit/src/PlayerJourneyTeaser.tsx` | One owned composition containing the shot table, captions, crop targets, audio cues and end card. Avoid a new editing framework or duplicate app UI. |
 | Existing `trailer/edit/src/Root.tsx`, `package.json` | Register `PlayerJourneyTeaser` and add distinct `teaser` / `teaser:preview` render scripts; preserve `Trailer`, `ReadmeLoop` and their existing scripts. |
 | Existing `trailer/edit/scripts/gen-score.mjs`, `gen-cue.mjs` | Reuse score/cue generation. If the score needs a longer arrangement, add optional duration/output settings with unchanged defaults; never overwrite old audio unintentionally. |
+| New `trailer/edit/scripts/master-teaser.mjs` | Reproducible two-pass audio mastering, H.264/yuv420p packaging, measured video duration and loudness sidecar; refuses an existing delivery path. |
 | Ignored `trailer/edit/public/player-journey/` | Remotion media staged from the new original captures and audio. The transcript records the source-to-staged mapping. |
 | New local `trailer/out/player-journey-teaser.mp4`, `player-journey-teaser-preview.mp4`, `player-journey-teaser-poster.png` | Final, review copy and poster. Leave ignored until the user requests repository/public delivery. |
 | Existing `docs/trailer/IMPLEMENTATION.md` | This plan and later evidence/checklist updates. |
@@ -103,29 +104,29 @@ Execution was authorized on 2026-11-12. Check tasks only after their acceptance 
 
 - [ ] Read current Unity hierarchy/callbacks for the chosen route and confirm `MM4`, a single persistent overlay, current chat layout, question input and button behaviour. Check the chosen apparatus and quiz text against the actual app.
 - [x] Confirm the existing local ffmpeg, Node, locked Remotion dependencies, ignored capture folders, disk space and Windows build target. Do not install a replacement pipeline or change build targets without a demonstrated need.
-- [ ] Produce a separate Development capture build, launch it with `-tutor-demo` through LoginPage → Dashboard, and complete one two-question exchange. Confirm the player log shows `Tutor mode: Demo (-tutor-demo)` and that no request reaches OpenAI. Check input locks while pending and restores after a reply; inspect Console/player errors.
-- [ ] Rehearse lab → chat → resume → quiz with real input at 1920 × 1080. Verify the bot does not block the apparatus once closed and the quiz score is genuine. Stage passes only when the whole route and the scripted replies work.
+- [x] Produce a separate Development capture build, launch it with `-tutor-demo` through LoginPage → Dashboard, and complete one two-question exchange. Confirm the player log shows `Tutor mode: Demo (-tutor-demo)` and that no request reaches OpenAI. Check input locks while pending and restores after a reply; inspect Console/player errors.
+- [x] Rehearse lab → chat → resume → quiz with real input at 1920 × 1080. Verify the bot does not block the apparatus once closed and the quiz score is genuine. Stage passes only when the whole route and the scripted replies work.
 
 ### 2. Record the new takes
 
 - [ ] Update the capture helpers narrowly and recalibrate coordinates against the current UI/DPI. Smoke-record ten seconds first; verify cursor, framing, text and playback. Do not run the legacy blanket process-kill behaviour.
-- [ ] Capture fresh material for the complete running order. Use a fresh conversation for each attempt. Scripted replies are deterministic, so retake only for timing, focus or framing problems.
-- [ ] Save the complete selected exchange, marks, mode/model and source mapping in the new transcript. Verify the filmed apparatus and answer wording; no new curriculum claims or unsupported hints.
+- [x] Capture fresh material for the complete running order. Use a fresh conversation for each attempt. Scripted replies are deterministic, so retake only for timing, focus or framing problems.
+- [x] Save the complete selected exchange, marks, mode/model and source mapping in the new transcript. Verify the filmed apparatus and answer wording; no new curriculum claims or unsupported hints.
 - [ ] Inspect contact sheets and full chat clips. Reject desktop leaks, errors, unreadable replies, focus failures, dropped actions, a hidden demo notice, or any tutor mode other than the scripted one. Chat capture passes only with both turns readable and the demo notice visible.
 
 ### 3. Edit the teaser and mix audio
 
-- [ ] Build `PlayerJourneyTeaser.tsx` and register its composition. Keep timings, captions and crop positions in a clearly named shot table; derive duration from the timeline to avoid a clipped ending.
+- [x] Build `PlayerJourneyTeaser.tsx` and register its composition. Keep timings, captions and crop positions in a clearly named shot table; derive duration from the timeline to avoid a clipped ending.
 - [ ] Use normal-speed important actions and visible cursor paths. Establish each screen before cropping; keep apparatus, typed question, reply and scroll motion clear. Limit transitions to short fades/cuts; let reading time govern pacing.
 - [ ] Reuse the score at a restrained level, with lower music during chat. Align UI sounds to visible actions; avoid synthetic reply cues that imply guaranteed correctness. Keep any retained captured audio and added cues from doubling the same click.
 - [ ] Render representative stills including the longest answer and end card. Check 1080p and a 720p viewing size, caption boundaries, Malay glyphs, muted comprehension, and the development/demo qualifier.
-- [ ] Run `npx tsc --noEmit` in `trailer/edit/` using the existing dependencies, then render the new preview. Expected: typecheck and new composition render succeed without changing old composition IDs or outputs.
+- [x] Run `npx tsc --noEmit` in `trailer/edit/` using the existing dependencies, then render the new preview. Expected: typecheck and new composition render succeed without changing old composition IDs or outputs.
 
 ### 4. Review and deliver locally
 
 - [ ] Watch the complete preview with sound and muted. Compare the chat frames to the transcript; check sequence continuity, actual loading states, answer reading time, scroll limits and the return to gameplay. Contact sheets supplement full playback.
 - [ ] Inspect the full export for exposed credentials/personal material and every promotional claim for accuracy. No screen vision, progress awareness, guaranteed correctness, live public-release service, streaming, OpenAI or model-name claims.
-- [ ] Check final metadata with ffprobe: 1920 × 1080, 60 fps, H.264/yuv420p with AAC audio, duration matching the composition. Deliver a 1280 × 720 preview targeting under 20 MB and a poster from an actual frame. If source capture drops frames, recapture important actions rather than claiming native 60 fps motion from duplicated frames.
+- [x] Check final metadata with ffprobe: 1920 × 1080, 60 fps, H.264/yuv420p with AAC audio, duration matching the composition. Deliver a 1280 × 720 preview targeting under 20 MB and a poster from an actual frame. If source capture drops frames, recapture important actions rather than claiming native 60 fps motion from duplicated frames.
 - [ ] Measure audio with ffmpeg loudness analysis; target about -18 to -16 LUFS integrated and true peak at or below -1 dBTP. Listen for clipping, abrupt cuts and distracting cues.
 - [ ] Review the final diff and record build/take identity, resolutions, actual interactions, tools/checks run, output paths, duration and untested limits here. Confirm ordinary release behaviour and original trailer outputs were preserved.
 - [ ] Deliver local files and editable source locations for user review. Do not commit, push, replace the README trailer, upload a video, or modify the GitHub release without a separate request.
@@ -170,7 +171,29 @@ Verified with a rebuilt Development player at `Temp/PlayerJourneyCapture/Evergre
 
 Capture note: the player log is only fully written on a graceful close (`CloseMainWindow`), not after a forced kill. Use a graceful close before reading logs.
 
-Remaining work: rehearse the full route with the scripted tutor (Aktiviti 4 selected, both questions, notice visible); complete overlay/state inspection; capture cadence/outline correction and supervised production takes; new Remotion composition, audio, review renders and delivery. No new composition, score, final render or publishing operation has been performed. Stage 1 remains incomplete and stages 2–4 remain open.
+That was the status at the end of the demo-flag change. The next execution entry supersedes its remaining-work list.
+
+### Full demo rehearsal and first edited take — 2026-11-12
+
+Completed the real-input LoginPage → Dashboard → Aktiviti 4 lesson → experiment → two-question demo conversation → resume apparatus → quiz route at physical 1920 × 1080. Both `MM4` answers matched the existing scripted content. Pending input/send states and restored controls were observed, the notice stayed visible, the resumed second label produced `Langkah selesai`, and the quiz changed from question 1/score 0 to question 2/score 10. A very fast desktop-tool drag did not register; the existing smooth-drag helper succeeded and is used in the production script. This validates the filmed journey, not all 12 procedure steps or all quiz questions.
+
+`trailer/capture/Take-PlayerJourney.ps1` now records the rehearsed route, polls focus/framing during holds, verifies demo mode and the experiment-4 prompt in the player log, saves event marks and four checkpoint stills, and rejects reused take names. It remains a supervised capture script: the filmed text/score require review, rather than being inferred from fixed waits. `Drive.ps1` retains its old GDI default; the new take selects Desktop Duplication, uses four-pixel overscan to exclude the capture outline, and records explicit CFR output. Shutdown now requests a graceful close before a bounded force-stop fallback. The parent shell's credential environment value is restored after launching a child without it; the demo flag still forces the non-network branch.
+
+Fresh source: `trailer/raw/player-journey/journey-01.mp4`, 150.000 seconds, 1920 × 1080 H.264/yuv420p, **9,000 frames at 60 fps**. ffmpeg reported **96 duplicated / 2 dropped** frames during timestamp resampling, so this is not evidence of native 60 fps gameplay. Full decode to null passed. Both answer checkpoints, resumed completion, quiz score, the five-second contact sheet and an extracted encoded answer frame were inspected. The encoded frame excludes the Windows outline without replacing app content.
+
+The take's final marker falsely says rejected: PowerShell returned a null exit code because the process handle had not been retained. The file was recovered for editing after inspecting ffmpeg's normal completion, ffprobe metadata, full decode and checkpoints. The original marker remains in the source marks; the script now retains the native handle and waits for completion. A separate process-handle check returned exit code 0; a second full take with that fix has not been run. The player log contains `Tutor mode: Demo (-tutor-demo)` and the matching cloning prompt, with no API error or exception lines found. No live request was attempted for this rehearsal or take.
+
+The [take transcript](../../trailer/capture/transcripts/player-journey-teaser.md) records exact replies, source identity, event times, staging map, recovery evidence and capture limits. QA output remains under `Temp/qa_screens/teaser/`.
+
+The new `PlayerJourneyTeaser` composition is **74.2 seconds**, with normal-speed actions, 13- and 10-second answer holds (31 and 25 words), explicit scripted-demo captions and a five-second end disclosure. `TEASER_SHOTS` owns timings/crops/captions. The old composition IDs/scripts remain available. The existing score generator accepts an optional bar count while retaining its 20-bar default; a separate 30-bar score was generated for this take. TypeScript passed; answer/end-card stills were rendered and visually checked at 720p. The first preview render exposed a floating-point scale error; its script now uses `0.6666666666666666`, giving exact 1280 × 720 dimensions.
+
+The corrected preview rendered successfully and its full contact sheet was inspected. `trailer/out/player-journey-teaser-preview.mp4` is **1280 × 720, 60 fps, 4,452 video frames, exactly 74.200 seconds**, limited-range H.264/yuv420p with AAC audio; size **3,843,297 bytes**. Full preview decode passed. `scripts/master-teaser.mjs` adds reproducible two-pass loudness normalization and standard video packaging without overwriting its input or an existing delivery. Measured preview loudness is **−16.96 LUFS integrated / −1.48 dBTP**; the evidence JSON is beside the MP4. An initial 0.1-second loudness-filter tail was removed by deriving export duration from the video stream. Run `npm run teaser:preview` then `npm run teaser:preview:master` to reproduce the preview, and the equivalent `teaser` then `teaser:master` for the master. The full-resolution Remotion render is in progress.
+
+The collaborative browser returned `Authentication required` for both status and open calls; local Remotion Studio was started at `http://localhost:3000` and its CLI opened the installed browser. Browser playback has not been verified. The mastered local preview opened in PotPlayer, showed normal playback at the opening and second-reply segment, and advanced to the next file after reaching its end. The review player was then closed. This is observed playback plus sampled visual/contact-sheet review, not an uninterrupted sound-on and muted quality review. No commit, push, README replacement or release/publishing operation was performed during this execution slice.
+
+**Local delivery:** `trailer/out/player-journey-teaser.mp4` is 1920 × 1080, H.264/yuv420p, AAC, 60 fps, **4,452 frames / exactly 74.200 seconds**, **5,591,510 bytes**. Mastering measured **−16.96 LUFS / −1.48 dBTP**. Full decode passed. The second-reply frame and `player-journey-teaser-poster.png` (actual frame at 71 seconds, 1920 × 1080) were visually inspected. The mastered 720p preview above is the review copy. Both MP4s have matching audio/video stream durations and separate loudness sidecars. The old trailer, loop, poster, composition sources and README have no diff from this slice. New exports/raw media remain ignored; editable source changes remain local and uncommitted.
+
+Remaining before calling the teaser finished: uninterrupted sound-on and muted review, subjective audio/transition review, and final review of framing/continuity and all promotional claims. The first draft currently uses music only; synchronized UI sound cues are not implemented. Detailed overlay/hierarchy checks and a second end-to-end capture after the exit-code fix remain unverified. The task has produced a reviewable local cut; these open checks are not claimed complete.
 
 After implementation, common edits belong in `PlayerJourneyTeaser.tsx` (captions, shot timing, framing, cue levels), `Take-PlayerJourney.ps1` (capture route/actions), and the transcript (provenance and selected marks). Original recordings remain the source for filmed UI; the TypeScript composition is the editable source for the trailer. The MP4 and poster are exports.
 

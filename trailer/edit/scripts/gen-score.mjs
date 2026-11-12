@@ -5,7 +5,8 @@ import { writeFileSync } from 'node:fs';
 const SR = 44100;
 const BPM = 96;
 const BEAT = 60 / BPM;
-const BARS = 20;
+const BARS = Number(process.argv[3] ?? 20);
+if (!Number.isInteger(BARS) || BARS < 4 || BARS > 100) throw new Error('Bars must be an integer from 4 to 100');
 const LEN = BARS * 4 * BEAT + 1.5;
 const L = new Float32Array(Math.ceil(LEN * SR));
 const R = new Float32Array(L.length);
@@ -42,17 +43,17 @@ for (let bar = 0; bar < BARS; bar++) {
   }
   add(t0, 4 * BEAT, (t, p) => Math.sin(2 * Math.PI * hz(ch[0] - 12) * t) * Math.sin(Math.PI * p), 0.12 * swell);
 
-  if (bar >= 2 && bar < 19) {
+  if (bar >= 2 && bar < BARS - 1) {
     for (let b = 0; b < 4; b++) {
       add(t0 + b * BEAT, 0.25, (t, p) => Math.sin(2 * Math.PI * (48 * Math.exp(-t * 18) + 42) * t) * env(p, 0.005), 0.35);
     }
   }
-  if (bar >= 8 && bar < 19) {
+  if (bar >= 8 && bar < BARS - 1) {
     for (let b = 0; b < 4; b++) {
       add(t0 + (b + 0.5) * BEAT, 0.05, (t, p) => (Math.random() * 2 - 1) * env(p, 0.01), 0.05, 0.3);
     }
   }
-  if (bar >= 4 && bar < 19) {
+  if (bar >= 4 && bar < BARS - 1) {
     for (let k = 0; k < 8; k++) {
       const m = ch[k % 3] + 12 + (k % 4 === 3 ? 12 : 0);
       add(t0 + k * BEAT / 2, 0.4, (t, p) => Math.sin(2 * Math.PI * hz(m) * t) * env(p, 0.004), 0.06, k % 2 ? 0.35 : -0.35);

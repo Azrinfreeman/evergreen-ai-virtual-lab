@@ -22,13 +22,19 @@ Flow: `LoginPage` → `Dashboard` → `Experiments/aktN` or `Quiz/Uji Diri N` �
 
 Progress is stored only on the device that played. The only network calls come from the AI tutor, and only in the Editor with a key set.
 
-## Trailer
+## Teaser: a learner's journey
+
+[![Watch the 74-second Evergreen player-journey teaser](trailer/out/player-journey-teaser-poster.png)](trailer/out/player-journey-teaser.mp4)
+
+[Watch the teaser](trailer/out/player-journey-teaser.mp4) (1080p60, 74 seconds). It follows a learner through the real app: login, choosing Aktiviti 4, a lesson, dragging apparatus in the lab, asking the assistant two questions, and finishing with the Uji Diri quiz.
+
+## Earlier trailer
 
 [![Watch the 50-second Evergreen STEM Virtual Lab trailer](trailer/out/trailer-poster.png)](trailer/out/trailer.mp4)
 
 [Watch the trailer](trailer/out/trailer.mp4) (1080p60, 50 seconds) or the [10-second silent tutor loop](trailer/out/readme-loop.mp4).
 
-The tutor exchanges in both videos are scripted for the trailer; the app uses OpenAI with your own key.
+**About the tutor in the videos:** the assistant's answers in the teaser, the trailer and the loop are the app's scripted demo replies, not OpenAI output, and the teaser works without an OpenAI account. A live OpenAI tutor needs your own key in the Editor (see [`docs/OPENAI_SETUP.md`](docs/OPENAI_SETUP.md)).
 
 ## AI in this project
 

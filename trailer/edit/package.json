@@ -1,1 +1,23 @@
-{"name":"evergreen-trailer","private":true,"version":"1.0.0","scripts":{"studio":"remotion studio","render":"remotion render src/index.ts Trailer ../out/trailer.mp4 --codec=h264 --crf=16","preview":"remotion render src/index.ts Trailer ../out/preview.mp4 --codec=h264 --crf=28 --scale=0.5","loop":"remotion render src/index.ts ReadmeLoop ../out/readme-loop.mp4 --codec=h264 --crf=24"},"dependencies":{"@remotion/cli":"^4.0.541","@types/react":"^19.3.0","react":"^19.3.1","react-dom":"^19.3.1","remotion":"^4.0.541","typescript":"^7.0.2"}}
+{
+  "name": "evergreen-trailer",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render src/index.ts Trailer ../out/trailer.mp4 --codec=h264 --crf=16",
+    "preview": "remotion render src/index.ts Trailer ../out/preview.mp4 --codec=h264 --crf=28 --scale=0.5",
+    "loop": "remotion render src/index.ts ReadmeLoop ../out/readme-loop.mp4 --codec=h264 --crf=24",
+    "teaser": "remotion render src/index.ts PlayerJourneyTeaser ../out/player-journey-teaser-source.mp4 --codec=h264 --crf=16",
+    "teaser:preview": "remotion render src/index.ts PlayerJourneyTeaser ../out/player-journey-teaser-preview-source.mp4 --codec=h264 --crf=24 --scale=0.6666666666666666",
+    "teaser:master": "node scripts/master-teaser.mjs ../out/player-journey-teaser-source.mp4 ../out/player-journey-teaser.mp4",
+    "teaser:preview:master": "node scripts/master-teaser.mjs ../out/player-journey-teaser-preview-source.mp4 ../out/player-journey-teaser-preview.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.541",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.541",
+    "typescript": "^7.0.2"
+  }
+}

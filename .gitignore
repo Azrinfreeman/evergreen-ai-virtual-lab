@@ -88,6 +88,8 @@ trailer/out/*
 !trailer/out/trailer.mp4
 !trailer/out/readme-loop.mp4
 !trailer/out/trailer-poster.png
+!trailer/out/player-journey-teaser.mp4
+!trailer/out/player-journey-teaser-poster.png
 
 trailer/edit/node_modules/
 trailer/edit/public/
