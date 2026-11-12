@@ -29,10 +29,16 @@ function Start-Game([string]$Executable = $script:GameExe, [string]$LogFile, [sw
   # -tutor-demo forces the scripted tutor replies, so a take never calls OpenAI even if a key exists.
   $launchArgs = @('-popupwindow','-screen-width','1920','-screen-height','1080','-screen-fullscreen','0','-tutor-demo')
   # The child process also never sees a key from this shell.
-  Remove-Item Env:\OPENAI_API_KEY -ErrorAction SilentlyContinue
   if ($LogFile) { $launchArgs += @('-logFile', ('"' + $LogFile + '"')) }
   # The player is the visible interactive subject of the recording, not a background helper.
-  $script:CapturePlayer = Start-Process -FilePath $Executable -ArgumentList $launchArgs -PassThru -WindowStyle Normal
+  $previousKey = [Environment]::GetEnvironmentVariable('OPENAI_API_KEY', 'Process')
+  try {
+    [Environment]::SetEnvironmentVariable('OPENAI_API_KEY', $null, 'Process')
+    $script:CapturePlayer = Start-Process -FilePath $Executable -ArgumentList $launchArgs -PassThru -WindowStyle Normal
+  } finally {
+    [Environment]::SetEnvironmentVariable('OPENAI_API_KEY', $previousKey, 'Process')
+    $previousKey = $null
+  }
   $p = $script:CapturePlayer
   for ($i = 0; $i -lt 60; $i++) {
     $p.Refresh()
@@ -57,7 +63,10 @@ function Start-Game([string]$Executable = $script:GameExe, [string]$LogFile, [sw
 
 function Stop-Game {
   if ($script:CapturePlayer -and -not $script:CapturePlayer.HasExited) {
-    Stop-Process -Id $script:CapturePlayer.Id -Force -ErrorAction SilentlyContinue
+    $closed = $script:CapturePlayer.CloseMainWindow()
+    if (-not $closed -or -not $script:CapturePlayer.WaitForExit(5000)) {
+      Stop-Process -Id $script:CapturePlayer.Id -Force -ErrorAction SilentlyContinue
+    }
     if (-not $script:CapturePlayer.WaitForExit(5000)) { throw 'Owned capture player did not stop within five seconds.' }
   }
   $script:CapturePlayer = $null
@@ -109,13 +118,28 @@ function Type-Text([string]$text, [int]$delayMs = 55) {
 }
 
 # Records the 1920x1080 region at desktop 0,0 for $seconds at 60 fps. Returns the ffmpeg process.
-function Start-Record([string]$outFile, [int]$seconds) {
+function Start-Record([string]$outFile, [int]$seconds,
+  [ValidateSet('Gdi','DesktopDuplication')][string]$Backend = 'Gdi', [string]$LogFile) {
   Assert-GameFocus
   if (Test-Path -LiteralPath $outFile) { throw "Recording already exists: $outFile" }
   $parent = Split-Path -Parent $outFile
   if ($parent) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
   $args = @('-hide_banner','-loglevel','error','-n','-f','gdigrab','-framerate','60','-offset_x','0','-offset_y','0','-video_size','1920x1080','-draw_mouse','1','-i','desktop','-t',"$seconds",'-c:v','libx264','-preset','veryfast','-crf','14','-pix_fmt','yuv420p',('"' + $outFile + '"'))
-  Start-Process -FilePath ffmpeg -ArgumentList $args -PassThru -WindowStyle Hidden
+  if ($Backend -eq 'DesktopDuplication') {
+    # Four-pixel overscan removes the OS capture outline; no app UI is replaced.
+    # CFR resamples desktop timestamps. It does not prove native 60 fps gameplay.
+    $args = @('-hide_banner','-loglevel','info','-n','-f','lavfi','-i',
+      'ddagrab=framerate=60:video_size=1920x1080:draw_mouse=1',
+      '-vf','hwdownload,format=bgra,crop=1912:1072:4:4,scale=1920:1080',
+      '-t',"$seconds",'-c:v','libx264','-preset','ultrafast','-crf','18',
+      '-fps_mode','cfr','-r','60','-pix_fmt','yuv420p',('"' + $outFile + '"'))
+  }
+  $startOptions = @{ FilePath='ffmpeg'; ArgumentList=$args; PassThru=$true; WindowStyle='Hidden' }
+  if ($LogFile) { $startOptions.RedirectStandardError = $LogFile }
+  $process = Start-Process @startOptions
+  # Retain the native handle so Windows PowerShell can retrieve ExitCode after completion.
+  $null = $process.Handle
+  return $process
 }
 
 function Save-Shot([string]$outFile) {
