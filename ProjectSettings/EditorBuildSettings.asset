@@ -51,6 +51,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Experiments/akt7.unity
     guid: 11ed923168a75144db5734dd8bcef016
   m_configObjects:
+    com.unity.adaptivePerformance.basic.provider_settings: {fileID: 11400000, guid: 78d99d2aa3dde4143939957d374ecdb1, type: 2}
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: badb5881d6ec698488a0b4db9666409b, type: 2}
     com.unity.adaptiveperformance.samsung.android.provider_settings: {fileID: 11400000, guid: 26d49266b0a2ae54e82d3a646046f7f1, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 8fe23427805cba24ca5cf49a1d0a1b7f, type: 2}
