@@ -2,7 +2,26 @@
 
 Status: implementation in progress. Live baseline inspection has started; the full revamp is not complete. Verified changes and remaining checks are recorded below.
 
-Updated: 2026-11-09. This is the authoritative plan for the full science UI revamp. [AGENTS.md](AGENTS.md) defines the lasting design and development rules. Keep progress and evidence here during implementation; do not treat a written task as completed work.
+Updated: 2026-11-12. This is the authoritative plan for the full science UI revamp. [AGENTS.md](AGENTS.md) defines the lasting design and development rules. Keep progress and evidence here during implementation; do not treat a written task as completed work.
+
+Next proposal (2026-11-10, not approved or started): [UI_REVAMP_PLAN.md](UI_REVAMP_PLAN.md) covers wayfinding, a colour system with meaning, and game feel across all screens. Record its evidence here once phases begin.
+
+UI_REVAMP_PLAN progress (2026-11-10): Phase 0.4 done. The cyan answer on load came from the `Question` `UiFocusScope.initialSelection` (answer A) combined with the answer buttons' cyan `selectedColor`. Phase 1.2 done in the Uji Diri 6 pilot only: `initialSelection` cleared in the scene, and `QuestionController.applyQuestion()` now writes "Soalan N daripada M" (applies to all 7 quizzes). Play Mode check: no selection on load, label "Soalan 1 daripada 5", no Console errors; capture `Temp/qa_screens/scan/10-quiz6-after.png`. Not done: the same `initialSelection` fix in Uji Diri 1-5 and 7, the rest of Phase 1, physical mouse/keyboard check, other resolutions.
+
+UI_REVAMP_PLAN Phase 1 pilot, Uji Diri 6 (2026-11-10, saved). New scripts under `Assets/UI/Science/Scripts/`: `UiMotion` (reduce-motion key `ui.reduceMotion` in PlayerPrefs; no settings toggle exists yet), `UiFeedbackMotion` (pop and wobble using scale and rotation only), `QuizProgressPills`. Changed: `QuestionController` (records the clicked option; the picked answer is tagged "Pilihan anda:" or "Pilihan anda · Betul:"; records each result in the pills), `ScoreController` (400 ms count-up plus a coin pop, skipped when reduced motion is on), `loadScore` (result line "N daripada M betul (S / X mata)" plus a message from the plan's wording bands; wording is a proposal and awaits owner confirmation). Scene: new `Canvas/QuizProgress` (6 pills, hidden beyond the question count, placed below the question panel and before `QuitPrompt` in sibling order); `UiFeedbackMotion` on the four answer buttons and the coin icon; the coin block re-anchored to its container's top-right; the old "Pilih tindakan seterusnya." line now holds the result message. Play Mode run at 8x speed with a scripted pattern (wrong, right, wrong, right, right): pills read 1 Salah, 2 Betul, 3 Salah, 4 Betul, 5 Betul; the score ended at 30 and the result showed "3 daripada 5 betul (30 / 50 mata)". No Console errors. Captures: `Temp/qa_screens/scan/11-quiz6-wrong.png`, `12-quiz6-result.png`. Known: the coin's dark score bar still looks cut off at the right edge in the capture (its sprite appears wider than its box); the old question panel shows through the result dialog's edges (existing layout); "Cuba lagi" starts with the cyan focus fill. Not tested: other quizzes (the three C# changes also run there, but their scenes have no pills, motion components or message label wired), physical input, six resolutions, reduce-motion on.
+
+Known-issue fixes, Uji Diri 6 (2026-11-10, saved, Play Mode captures `Temp/qa_screens/scan/13`-`17-*.png`, no Console errors): coin block no longer uses a layout group, is scaled 0.7 and anchored top-right, score text 39 bold white; `CongratPrompt` and `QuitPrompt` panels anchored to (0.15,0.12)-(0.85,0.86) so the question panel no longer shows through, title band stretched full width; dialog buttons use `selectedColor` = `normalColor`, so focus shows only the navy `UiFocusIndicator` outline. Not captured: QuitPrompt visuals (same changes), physical input, the six resolutions. "Laman utama" is still the only primary button on the result dialog.
+
+Phase 1 rollout (2026-11-10, saved): the Uji Diri 6 setup was applied by script to Uji Diri 1-5 and 7: `initialSelection` cleared, `QuizProgress` pills, `UiFeedbackMotion` on answers and coin, `coinMotion` and `messageLabel` wired, coin re-anchored (layout group removed, scale 0.7, score text 39), dialog panels and title bands re-anchored, dialog `selectedColor` = `normalColor`. Play Mode: quiz 7 scripted run (wrong, right, wrong, right, wrong, right) gave 6 pills "Salah/Betul", result "3 daripada 6 betul (30 / 60 mata)", capture `Temp/qa_screens/scan/18-quiz7-start.png`. Quizzes 1-5 start-state check: no selection, "Soalan 1 daripada 5", 5 pills. No Console errors. Not done: full playthrough and result capture for quizzes 1-5, physical input, six resolutions, reduce-motion on.
+
+Quiz verification pass (2026-11-10), Play Mode, scripted input (not physical mouse/keyboard):
+- Full scripted playthroughs (wrong, right, wrong, right, ...) on quizzes 1-5 and 7 (quiz 6 earlier): pills read Salah/Betul, score and result line "N daripada M betul (S / X mata)" with the band message were correct. Captures `Temp/qa_screens/scan/21`-`23-*result.png` and `19`. A poll that read the dialog on its first frame saw the old text because `loadScore.Start` had not yet run; a later read was correct (not a product bug).
+- Found and fixed: the rollout had not persisted the dialog buttons' `selectedColor` (still cyan), so "Cuba lagi" opened cyan. Re-applied through `SerializedObject` in all seven scenes and re-read from disk: all `FFFFFF`. Capture shows white fill with navy ring.
+- Found and fixed: at 4:3 and 5:4 the coin icon overlapped the question panel's top-right corner (the right margin is a fixed share of screen width). Coin scale 0.7 -> 0.55 and score font 39 -> 43 in all seven scenes. Re-checked at 1024x768, 1280x1024 and 2560x1080: clear of the panel.
+- Game view sizes checked on quiz 7 (question, answered, result dialog where noted): 1920x1080, 1280x720, 1280x800, 1024x768, 1280x1024, 2560x1080 (`30`-`32-q7-*.png`). Layout, 6 pills and long Malay answers fit at every size; the answer with three lines at 1280x1024 stays inside its button. The dialog was checked at 1024x768 and 2560x1080 only.
+- No Console errors.
+- Physical mouse and keyboard (clicking through a quiz, tabbing answers, Escape on the quit dialog): checked by the project owner, who reported everything working (owner report, no capture).
+- Still not tested: reduce-motion on, quizzes other than 7 at the non-default sizes, the QuitPrompt visuals.
 
 ## Outcome and scope
 
@@ -111,6 +130,24 @@ Use existing state changes/events for new presentation updates instead of adding
 ## Implementation stages
 
 Implement sequentially. Each stage requires its own inspection, a small reviewable change, saved assets, and the listed evidence before moving on. Keep existing user edits intact; the working tree already contains package/settings/sample-script changes and untracked documentation/screenshots.
+
+### Status reconciliation - 2026-11-12
+
+The checkboxes in this section are the original plan and were mostly not ticked as work landed. Use this table, which is based on the Progress and evidence entries below, as the current status. "Scripted" means Play Mode with synthetic events, not physical input.
+
+| Stage | Status | Evidence / what is open |
+|---|---|---|
+| 0 Baseline | Done | Stage 0 findings (2026-11-09) and the 2026-11-10 scan in `Temp/qa_screens` (temporary files). |
+| 1 First slice (akt4 + Dashboard) | Done, reviewed by owner | akt4 slices and the 2026-11-09 akt4 pass. Full six-size matrix was not run for every page. |
+| 2 Entry, activities, lessons | Done | Login, Dashboard cards, three-station hubs, page indicators (49 pages), A2 L1 relinked 1-14, A3 orphans removed. Open: curriculum review of A2 L1 pages 6-14; sizes other than 1920x1080 for the newer pages. |
+| 3 Experiments | Done for akt3-akt7 | Step counters, slot cues, drag lift, completion chips; scripted drop checks on akt3, akt4, akt5, akt6 (pages `0 (2)`, `0 (3)`, `0 (4)`, `0 (8)`) and akt7. Open: akt6 pages handled by other scripts, real mouse drags, akt5 pages 4/6/8/11/`13 (1)` visual capture (measured only). |
+| 4 Quizzes | Done | All 7 quizzes scripted end to end; owner confirmed physical mouse/keyboard on the quizzes. Open: reduce-motion on, `QuitPrompt` visuals. |
+| 5 Overlays, dialogs, input | Mostly done | Assistant icon + shared "Tetapan" dialog (reduce motion, sound) in the prefab for all 13 scenes. Open: live assistant behaviour (separate service work), keyboard Tab order on the new stations. |
+| 6 Player and hand-off | Mostly done | Rebuilt `Temp/ScienceUIBuild/Evergreen.exe` on 2026-11-12 after all current changes (Succeeded, 0 errors) and started it at 1280x720 with no exceptions (see the rebuild entry below). `docs/tutorial/ui-feel.md` covers the components, progress ids and reset. Open: the manual mouse/keyboard playthrough (Login → Dashboard → lesson → experiment → quiz → retry → exit). The `docs/ai/` maps are local-only (excluded in `.git/info/exclude`). |
+
+Still outside this pass: A9 scene fade, the grayscale/colour-vision review, rendered hit-area checks, and listening to the sound cues.
+
+**A1 local progress (added 2026-11-12):** new scripts `UiProgress`, `UiProgressMarker`, `UiProgressBadge`, `UiProgressBadgeGroup`, plus a "Set semula kemajuan" reset row inside the shared Tetapan dialog. Markers fire on the real finish routes (each experiment's final "Tamat", each Dashboard lesson chain's "Tamat", each quiz's `CongratPrompt`); read-only "Selesai" chips show on each Dashboard hub station once its stage is complete. Verified in Play Mode with scripted progress writes: 0 badges visible with empty progress, exactly 9 visible after `Dashboard/akt6/Uji Diri 1` completions (A1's lesson, A6's experiment, A1's quiz), 0 again after `UiProgress.ResetAll()`. Not yet verified: a real end-to-end run in the standalone player.
 
 ### 0. Establish a baseline
 
@@ -405,14 +442,118 @@ Remaining content review: confirm the stated reagent forms and concentrations (i
 
 ### Proposed experiment visual consistency pass - 2026-11-09
 
-Status: plan only, requested after the user supplied an experiment screenshot showing a large white instruction header, a heavily darkened illustrated lab, bright apparatus cues, and a disconnected bottom strip. No scene, prefab, or gameplay change is implemented by this plan. This section is the authoritative next visual pass within the existing revamp plan.
+Status: **plan only, revised after a read-only akt6 inspection.** Requested after the user supplied an experiment screenshot (akt6, first procedure page). No scene, prefab, or gameplay change has been made for this pass. This section is the authoritative next visual pass within the existing revamp plan. It supersedes the earlier draft of this section, whose bright-bench direction conflicts with the apparatus art (see "Bench decision").
+
+#### What the akt6 screenshot shows
+
+Source: the user's screenshot (Editor Game view, about 2000 × 1160) and a read-only Unity hierarchy query of `akt6` on 2026-11-09. The Game view was not captured by this pass, and `Temp/qa_screens` no longer exists, so earlier evidence images are gone. Percentages are estimated from the screenshot.
+
+| # | Observation | Why it hurts |
+|---|---|---|
+| 1 | The white top band takes about 26% of the window height and holds four controls plus the instruction. Kembali, "Langkah 1", the assistant button and Uji diri sit at three different heights and sizes, and the assistant button ends just above the instruction line and spans the end of its text. | Hard to scan; the bench loses space; the assistant crowds the instruction. |
+| 2 | Numbering disagrees: the header says "Langkah 1", the instruction starts with "2.", and the footer says "1. Sediakan balang". | Learners cannot tell which step they are on. Which number is real is unverified. |
+| 3 | The full-bleed lab illustration is tinted dark (akt6's procedure tint is recorded as `#332F2F`) with shelves, flasks and a monitor drawn behind the apparatus, and visible through the jar. | Scenery competes with the apparatus; the palette is a muddy brown-grey, not the navy identity. |
+| 4 | The jar is white line art with an orange lid, drawn for a dark backdrop. | It rules out a light bench unless the art changes (see "Bench decision"). |
+| 5 | The floating "CABUT PENUTUP BALANG" label is all caps, in a white box away from the lid. | Unclear whether it is a hint, a drop target or a button. Unverified. |
+| 6 | The pale footer strip is detached, carries one line and no controls, and the jar's base overlaps it. | Decoration that costs space and collides with apparatus. |
+| 7 | Thin dark gutters show at the left and right of the white bands. | The bands appear inset from the canvas edges. Anchors unverified. |
+| 8 | Kembali, Uji diri and the assistant button are plain white rectangles with thin grey borders and no visible states. | They do not match the Dashboard or akt4 treatment. |
+
+#### Live structure of akt6 (read-only)
+
+- Scene roots: `Main Camera`, `Canvas`, `SideMenu` (inactive), `EventSystem`, `LearningAssistant` (an in-scene instance of the persistent assistant with `DontDestroyCanvas`).
+- `Canvas` children: `Welcome` (active), `Prestart Bahan2`, `Experiments`, two scene-change buttons, one disabled text.
+- `Canvas/Experiments` children, in order: `bg`, `ScienceFooterShared`, `ScienceHeaderShared`, `Content`. The white band, the footer strip and the dark background are **three shared Image objects serving all 11 step pages**, left by the earlier header/footer rollout. Restyling them once changes every akt6 page.
+- `Content` has 11 pages named `0`, `0 (1)` to `0 (11)`, each with `ConditionalCheck` and `UiFocusScope` and 5 to 7 children. The instruction text lives inside each page, not in the shared header, so moving it means editing each page's text rectangle. Page names must not change because `ConditionalCheck` reads them.
+- Gameplay scripts in the scene (component counts): `DragController` 96, `ItemSlot` 32, `CheckOnEnabled` 31, `ConditionalCheck` 11, `NextExperimentController` 11, `SceneController` 2, `DisplayItem` 1. These are the contracts to protect; the `AGENTS.md` hierarchy rules apply to each.
+- Not read: the colors and sprites on `bg`, the header and the footer, because the tools used here cannot return component properties. Task 0.4 reads them.
 
 Read-only preview-scene inspection confirms three background assets across akt3-akt7: `Assets/UI/bgLab.jpg`, `Assets/pictures/labg2.jpg`, and `Assets/UI/bglab3.jpg`. Their tints differ even within a scene: akt3's procedure background uses #262626, akt5 uses #5E5E5E, akt6's procedure uses #332F2F, and akt7 uses #575555. akt4 has a different workspace treatment. The prior header/text rollout did not establish a consistent apparatus workspace. Preserve the current Canvas render modes and scaler settings, including akt6's 0.515 match and akt7's camera-backed Canvas.
 
-Proposed direction: a bright working laboratory with a quiet apparatus bench. Use #F2F6FA for the common workspace, white for opaque reading surfaces, #0B0B3B for text and the compact navigation header, #3D5AFE for the primary action, and #4FC3F7 with a navy edge for selection/focus accents. Keep the existing lab artwork as secondary context on introductions; remove the detailed full-screen illustration from directly behind working apparatus by covering it with the shared opaque bench surface. Do not darken the whole experiment to make apparatus stand out. Dark scrims belong to open dialogs only.
+Direction: a working lab bench with notebook-style reading surfaces. Every experiment page has the same three zones: a navy navigation bar, a white instruction band, and one flat bench with nothing decorative behind the apparatus. Use #0B0B3B for the bar, #FFFFFF for the instruction band, #3D5AFE for the primary action, and #4FC3F7 with a navy edge for selection and focus. Keep the existing lab artwork as context on the introduction pages only. Dark scrims belong to open dialogs only.
 
-- [ ] Audit visible backgrounds, tints, CanvasGroups, masks, material colors, selection cues, and runtime overrides in all five experiments, including preparation, active, waiting, completion, and photo states. Record which bright colors represent substances or electrical conventions and which are purely interface cues.
-- [ ] Build a reviewable akt6 slice: its introduction, the titanium-wire/anode step shown by the user, one later step, and completion. Use a compact navigation row, a distinct instruction region, a quiet bench, and an action footer only where actions exist. Start around 96-112 reference units for navigation; let instruction height follow content. Check actual apparatus clearance before setting final dimensions. Keep the assistant in reserved navigation space. Make the detached bottom strip serve real controls or remove its decorative background.
+#### Bench decision (gate before any rollout)
+
+The earlier draft proposed a bright `#F2F6FA` bench. The akt6 jar is white line art, and apparatus sprites are flattened images with no editable source, so white outlines would disappear on a light bench and tinting would also recolor the orange lid. Before choosing, render akt6's first procedure page three ways as screenshots only and let the owner pick:
+
+| Variant | Bench | Expected trade-off |
+|---|---|---|
+| A (recommended on current evidence) | Flat solid navy, no illustration | White apparatus stays legible; matches the navy identity; loses the lab scenery |
+| B | Light `#F2F6FA` bench with a navy tray panel behind each apparatus group | Bright overall; adds a panel per group and may clip the jar's base |
+| C | Current illustration under a flat navy scrim at high opacity | Keeps some scenery; the scrim darkens the whole scene, which this plan otherwise avoids |
+
+The recommendation comes from the one apparatus visible in the screenshot. The other four experiments' sprites have not been checked; if one is drawn for a light background, the decision is made per scene.
+
+#### Target layout (1920 × 1080 reference units)
+
+| Zone | Size and color | Contents | Notes |
+|---|---|---|---|
+| Navigation bar | Full width × 104, `#0B0B3B`, anchored to the canvas edges with no inset | Left: neutral "Kembali" (its label must name its real destination). Next: "Langkah N daripada M" only when both values come from the real procedure. Right: "Uji diri", then a reserved slot for the assistant button | Buttons 84 units high. Calculated hit size: 84 × 0.533 = 44.8 px at 1024 px wide with scaler match 0; akt6 uses match 0.515, scale about 0.62, so about 52 px. Confirm in the Game view |
+| Instruction band | Full width, `#FFFFFF`, height follows content (about 120 to 140 for two lines) | LiberationSans 30, navy text, key term in bold `#1D4ED8` (already used in akt4), left-aligned column capped near 1400 units | Total top chrome about 240 units, 22% of the height, against about 36% in the screenshot (26% header plus about 10% footer) |
+| Bench | Remaining height (about 740), flat color from the bench decision | Apparatus, untouched | No scenery behind working apparatus |
+| Action | "Seterusnya" and similar actions sit at the right end of the instruction band if the existing button can move there without breaking script references; otherwise a 72-unit bar that exists only when an action does | | The detached footer strip is removed |
+| Apparatus labels | White chip, 2-unit navy border, 8-unit radius, sentence case, 24 to 26 units | Existing label text | Removes the all-caps floating box; leader line only if the label names a specific object |
+| Control states | Normal, hover, pressed, selected/focused (cyan plus navy edge), disabled | Neutral controls: white outline on navy. Primary: `#3D5AFE`, white label | Back and Close are never red |
+
+#### Decisions needed from the owner
+
+| Decision | Default if no answer |
+|---|---|
+| Bench variant A, B or C | A, after the three screenshots are reviewed |
+| Instruction position: top band (this plan), or a bottom tray | Top band; a bottom tray would cover apparatus that currently overlaps the footer |
+| Assistant button: reserve its slot in each scene, or move it into the bar by editing the shared prefab (affects every scene) | Reserve the slot now; revisit the prefab after the akt6 pilot |
+| Pilot order | akt6, then akt3, akt5, akt7, then akt4 last so its existing treatment is brought in line |
+
+Owner answers (2026-11-09): (1) Yes, the owner chooses among bench variants A, B and C after the screenshots are rendered. (2) The assistant button stays floating; each experiment scene reserves a slot for it and `LearningAssistant.prefab` is not edited. (3) Pilot order accepted as the recommendation: akt6, akt3, akt5, akt7, akt4 last.
+
+Stage 0: baseline (read and capture only; nothing changes)
+
+- [ ] 0.1 Save a scene copy of `akt6` for rollback (an Editor copy under `Temp/qa_screens/`) and capture baseline Game-view screenshots of every akt6 page and dialog at 1920 × 1080, 1280 × 720, 1280 × 800, 1024 × 768, 1280 × 1024 and 2560 × 1080. Expect: a before-set to compare against.
+- [ ] 0.2 Resolve the numbering conflict (header "Langkah 1", instruction "2.", footer "1. Sediakan balang"). Read the real procedure order from the 11 pages and define one rule that shows a number only when it is real. Expect: a written mapping of page name to step number and total, or a decision to drop the count.
+- [ ] 0.3 Identify what the "CABUT PENUTUP BALANG" label and the footer line are (hint, drop target, button), what `Kembali` and `Uji diri` do, and the assistant button's anchor in `LearningAssistant.prefab`. Expect: every restyled label names its real action.
+- [ ] 0.4 Read the colors, sprites, anchors and raycast flags on `bg`, `ScienceHeaderShared` and `ScienceFooterShared`. Expect: the cause of the side gutters and which objects block clicks.
+- [ ] 0.5 Contract audit: list the objects and index or name assumptions for `DragController`, `ItemSlot`, `NextExperimentController`, `ConditionalCheck`, `CheckOnEnabled` and `DisplayItem` in akt6, and confirm nothing depends on `Content` being sibling index 3 of `Experiments`. Expect: a list of what must not move.
+- [ ] 0.6 Audit visible backgrounds, tints, CanvasGroups, masks, material colors, selection cues, and runtime overrides in all five experiments, including preparation, active, waiting, completion, and photo states. Record which bright colors represent substances or electrical conventions and which are purely interface cues.
+
+Stage 0 findings (2026-11-09, Play Mode on akt6, scene file unchanged and hash-identical to the rollback copy):
+
+- Evidence: `Temp/qa_screens/akt6.unity.bak` (rollback), `akt6_welcome_2000x1125.png`, and `akt6_pg_*.png` for all 11 procedure pages, all at the Game view's fixed size of about 2000 × 1125. The six other resolutions could not be captured with the available tools and need a manual Game-view check. Pages were shown by activating them from a script (the Mula button's click event was invoked once); no physical mouse walkthrough was done.
+- "CABUT PENUTUP BALANG" is a real `Button` with 5 click listeners, not a hint. The same all-caps style is used on about 15 buttons across the pages (also "TUTUP BEKAS", "PERIKSA BACAAN", "ANOD", "KATOD"). Restyle them as buttons with states.
+- Stale or stacked text exists in the current content, independent of styling:
+  - Pages `0`, `0 (1)`, `0 (4)` and `0 (5)` still show the step 1 instruction ("2. Cabut kepala balang ...") above the real instruction, and the step 1 footer line ("1. Sediakan balang") under later steps. On `0 (5)` (fill with soil) that text describes a different step.
+  - Pages `0 (10)` and `0 (11)` show several footer lines drawn on top of each other and unreadable.
+  - Headers read "Langkah 1" on the anode and cathode pages, "Langkah 2 (Pasang Anod)" on the soil page and "Langkah 3 (Pasang Anod)" for the second electrode. Naming and numbering are inconsistent, and the "(Pasang Anod)" suffix on step 3 may be a copy error. Needs the owner's confirmation before any wording change.
+  - Typos: "kontaner", "eletrod", "mengunakkan", "Hasilkan akan dapat dilihat". Flag for owner review rather than correct silently.
+- Layout: the white band and footer stop about 10 units short of the right edge on every page, showing a dark strip. The "ANOD" label on `0 (2)` is cut off by the footer, and the jar base overlaps the footer on every page. Page `0 (2)` uses plain green and grey rectangles as electrodes.
+- Page order in the hierarchy is `0` to `0 (8)`, then `0 (11)`, then `0 (10)`. `0 (9)` does not exist. The real on-screen order still needs to come from `NextExperimentController`.
+- The Welcome page has the same header treatment and a mostly empty white panel.
+
+Stage 1: bench gate
+
+- Stage 1.1 evidence (2026-11-09, temporary Play Mode edits only, scene hash unchanged): `Temp/qa_screens/akt6_bench{A,B,C}_{p1,p10}.png` for page `0` (jar and lid) and page `0 (10)` (jar and multimeter). Findings: A and C look almost the same because C's high-opacity scrim hides the illustration. B's navy tray looks boxy, and the "Sambung ke resistor" label overflows its edge. On pure navy `#0B0B3B` the dark maroon electrode wires and the black soil cap have low contrast. Next step is to test a lighter slate bench (about `#26345A`) in place of pure navy.
+- Stage 1.1 slate follow-up (2026-11-09, temporary Play Mode edits, scene hash unchanged): `Temp/qa_screens/akt6_slate_*.png` (pages `0`, `0 (2)`, `0 (5)`, `0 (10)`) with a flat `#26345A` bench. The jar outline, soil cap and orange parts read better than on `#0B0B3B`. The maroon wire sprite is still low contrast against `#26345A`, so that apparatus art is the limit, not the bench colour. The per-page footer text is dark navy and unreadable on the slate bench; it needs a light colour when moved onto the bench. The "ANOD" label on `0 (2)` is still cut off at the bottom of its white box.
+- Stage 1.1 wire finding (2026-11-09): the faint in-jar wires are not a separate sprite. They are 45 `Image` objects using `Assets/pictures/png2/Png/Parts/Pink_Line_Horizontal.png` (referenced only by `akt6.unity`) with `Image.color` set to `#1E1E1E`, which darkens the pink art to maroon. No sprite edit is needed. Tinting those instances in Play Mode fixed the contrast on the slate bench: white gives magenta-pink, `#F4D8A8` gives crimson (`Temp/qa_screens/akt6_wire_*.png`). The colour is a single value shared by all 45 instances, so the change is one colour to apply and to revert. The wire colour is not tied to a scientific convention in the scene (all 45 share one tint); the owner should confirm that before the change is saved. The multimeter probes use a different sprite (`Assets/wire.png`) and are unaffected.
+- Stage 2 first slice (2026-11-09, saved to `akt6.unity`, rollback copy `Temp/qa_screens/akt6.unity.bak`): `Experiments/bg` set to no sprite and `#26345A`; `ScienceFooterShared` hidden; 45 `Pink_Line_Horizontal` Images tinted `#F4D8A8`; stale `Text (TMP) (3)` hidden on pages `0`, `0 (1)`, `0 (4)`, `0 (5)` and stale `Text (TMP) (2)` on `0 (4)`, `0 (5)`; the two stacked footer lines on `0 (10)` and `0 (11)` separated (y 96 and 56); per-page footer text set to `#F2F6FA`. No wording changed. Evidence: `Temp/qa_screens/akt6_s2_*.png` (about 2000 × 1125, Play Mode, pages shown by script). Not done yet: header controls (Kembali, Uji diri, assistant slot) still unstyled and the white band still stops short of the right edge; caps button labels, "ANOD" clipping, Seterusnya visibility and the other resolutions are unchecked.
+- Stage 2 second slice (2026-11-09, saved, owner-approved wording fixes): typos corrected (kontena, elektrod, menggunakan, "Hasilnya akan", "Katod ="); headers now "Langkah 2: Pasang Anod", "Langkah 3: Pasang Katod", "Langkah 4: Tutup dan Sambung", "Langkah 5: Perhati dan Rekod". `Experiments` rect offset changed from -9/-9 to 0/0, which removes the dark right strip. Kembali and Uji diri moved to (+-160, -56) so they sit inside the band; step titles set to 36 at y -56. All 11 `Seterusnya` buttons are the primary style (`#3D5AFE` normal, `#5C74FF` hover, `#2A44D4` pressed, white label); caps button labels changed to sentence case ("Cabut penutup balang", "Tutup bekas", "Periksa bacaan"). ANOD label text rect on `0 (2)` and `0 (3)` reset to stretch so it fits its box. Console showed no errors after the changes. Evidence: `Temp/qa_screens/akt6_s3_*.png`, `akt6_s4_anod.png` (2000 x 1125, Play Mode). Not done: Welcome page, assistant slot, other resolutions, mouse walkthrough, keyboard focus check.
+- Stage 2 third slice (2026-11-09, owner-requested): the assistant button in `Assets/UI/Science/Prefabs/LearningAssistant.prefab` (shared by every scene) is now an 80 x 80 icon button at the top right, left of Uji diri, using the existing `brain.png` child that was previously hidden. The "Pembantu pembelajaran" text object is kept but inactive; the open/close listener and chat box are untouched. Rollback copy: `Temp/qa_screens/LearningAssistant.prefab.bak`. Other scenes need a check, since the old button was 280 x 96 at a different position. The icon has no visible text, so its meaning rests on the picture alone. Welcome page in akt6: bench `#26345A` instead of the lab photo, reading panel resized to 1200 x 320, `Mula eksperimen` as the primary button, "TUJUAN EKSPERIMEN:" changed to "Tujuan eksperimen:" (case only). Evidence: `Temp/qa_screens/akt6_s5_*.png` (the panel height was reduced afterwards and has not been re-captured).
+- Stage 2 fourth slice (2026-11-09, saved): akt6 `Prestart Bahan2`. Bench `#26345A`, white reading panel, navy "Bahan-bahan" heading (was `BAHAN-BAHAN`; it was previously hidden behind the scroll viewport, which now starts 100 units lower), `Seterusnya` primary style, labels navy text on `#DCE5EF` bars (white text had overflowed its bar onto white). `Radas` HorizontalLayoutGroup spacing 149.75 -> 80 so the first item is no longer clipped; jars item position is layout-driven. Kembali and Uji diri height 80 -> 88. Evidence: `Temp/qa_screens/akt6_s8_prestart.png`. Remaining on this page: label bars differ in width and font size (existing per-item sizes), and the MULTIMETER bar is cut at the viewport's right edge; the apparatus art is not size-matched. The assistant icon is still 80 x 80. Mouse/keyboard focus and the six resolutions are unchecked.
+- Stage 2 fifth slice (2026-11-09, saved): Prestart label bars unified (200 x 104 units, 22-unit navy text on `#DCE5EF`, centred under each item, no overlap); assistant icon raised to 88 x 88 at (-272, -12) in `LearningAssistant.prefab` (owner chose to keep the brain image). Note: label bars and some items carry local scales (0.3025), so sizes were set through the ratio to the Canvas scale. Evidence: `Temp/qa_screens/akt6_s11_prestart.png`, `akt6_s12_focus.png`. Keyboard check (scripted, not real key presses): from `seterusnya`, up -> assistant, left -> Kembali, right -> Uji diri; `UiFocusIndicator` is present, but a focus ring was NOT visible in the capture after selecting by script, so it is unconfirmed. Console: no errors. Not verified: real mouse and Tab presses, the six window sizes (Game view dropdown, manual).
+- akt3 pass (2026-11-09, saved, scripted treatment copied from akt6): bench `#26345A` on Welcome, both Prestart pages and Experiments; `ScienceFooterShared` hidden; Kembali/Uji diri at (+-160, -56) x 88 tall; step titles 36 at y -56 (17 pages); all Seterusnya/Mula buttons primary style; `SETERUSNYA` -> "Seterusnya" (pages 14, 15), `TUTUP` -> "Tutup" (Petri buttons); prestart panels white with navy headings ("Bahan-bahan", "Radas:"); prestart label bars navy text on `#DCE5EF` (Bahan2 170 x 104 at 22; Radas 148 x 104 at 20, below the 22 guideline because six items share the row); Welcome panel 1200 x 320; "TUJUAN EKSPERIMEN:" -> "Tujuan eksperimen:". Evidence: `Temp/qa_screens/c3_*.png`, `b3_*.png`. The capture tool lags one frame after a page switch, so file names can show the previous page. Wording flagged, NOT changed: Prestart Radas header says "Makmal Maya 1" while the other pages say "Makmal Maya 3"; pages 6-9 all read "Langkah 6" (and 10 reads "Langkah 7"). Not done: Play-mode run of the drag/drop steps, keyboard focus, six window sizes.
+- akt3 wording fix (2026-11-09, owner-approved, saved): Prestart Radas header "Makmal Maya 1" -> "Makmal Maya 3"; step titles "Langkah 9..15" renumbered to "Langkah 8..14" (pages 6-9 still read "Langkah 6").
+- akt5 pass (2026-11-09, saved): bench `#26345A` on Welcome, both Prestart pages and Experiments (Prestart bench moved to first sibling so the white header band shows above it); footer hidden; header buttons at (+-160, -56); 19 buttons primary style; `SETERUSNYA` -> "Seterusnya", `TUTUP BEKAS` -> "Tutup bekas", `HIDUPKAN` -> "Hidupkan", `MULAKAN` -> "Mulakan", `TAMAT` -> "Tamat" (grep found no script that reads these labels; only `NextExperimentController` sets "Tamat"); 18 step titles 36 at y -56; Prestart panels white with navy headings ("Radas", "Bahan", case only); label bars 200 x 104 at 22, navy on `#DCE5EF`; 9 body texts 24 -> 32; body text navy on the white header band, white on the slate bench; `<color=#1D4ED8>` tags on slate changed to `#4FC3F7` (markup only). Evidence: `Temp/qa_screens/d5_*.png`, `g5_*.png`. Method note: a first bar pass hit container objects (scroll `content`, item roots, heading panels); it was reverted with the Editor undo history and redone with a stricter filter. Not verified: drag/drop steps, real Tab/mouse, six window sizes; page 13 ("Mulakan") and the Hidupkan buttons keep the original white style.
+- akt5 wording fix (2026-11-09, owner-approved, saved, 42 texts): Prestart subtitle "(Cara A: Agar-agar nutrien)" removed; "vessel/Vessel" -> "bekas/Bekas"; "volumetric" -> "volumetrik"; "70 °C darjah celsius" -> "70 °C"; "sample" -> "sampel"; "deionized" -> "ternyahion"; "Sambung Wire" -> "Sambung wayar"; "Langkah 3 " trailing space removed; "HASIL" -> "Hasil"; "HASIL DARI GAMBAR SEBENAR" -> "Hasil daripada gambar sebenar". No change needed: pages 10/10 (1) are phases of one step and 13 (1) is step 14 (sequence is 1-14); the Prestart headings match their content (only the object names are swapped). Terms "bekas" and "ternyahion" should be confirmed against the curriculum. Evidence: `Temp/qa_screens/h5_*.png`.
+- akt7 pass (2026-11-09, saved): bench `#26345A` on Welcome, both Prestart pages and Experiments; header buttons at (+-160, -56) x 88; 11 Seterusnya/Mula/Tamat buttons primary style; Welcome panel white with navy text, 1200 x 320, text lifted clear of the Mula button; "Langkah N" titles 28 -> 36 at y -56 (4 pages), trailing space removed from "Langkah 3 "; Prestart placeholder notes white on the bench. akt7 already had white Prestart panels, shared header, procedure note and sentence-case labels from earlier slices, so no label bars were needed (items are text lists). Evidence: `Temp/qa_screens/a7_*.png`, `b7_*.png`. Flagged, NOT changed: Welcome/Prestart say "Makmal maya" in places and "Makmal Maya" in others; page 4's heading "Penangkapan sisa menggunakan filem getah" is white on the white header band and invisible. Not verified: drag/drop and the Hasil panel, real Tab/mouse, six window sizes.
+- akt7 follow-up (2026-11-09, saved, owner approved both): "Makmal maya" -> "Makmal Maya" in 2 texts (Welcome, Image); page 4 heading `Experiments/4/Text (TMP) (4)` moved onto the slate at y -336, height 56, size 36, white, so it no longer sits invisible on the white band. Both earlier "flagged, NOT changed" items are resolved. Evidence: `Temp/qa_screens/c7_p4.png` (heading clear of the note panel and step text at the captured size).
+- akt4 pass (2026-11-09, saved): akt4 previously had a navy header band and a light `#F2F6FA` workspace; brought in line with the other scenes. Bench `#26345A` (sprite removed, raycast off) on Welcome, Prestart Bahan2 and Experiments; every `ScienceHeader`/`ScienceHeaderShared` band white with navy title text; header buttons (Laman utama, Mula semula) at (+-160, -56), 192 x 88; 13 primary buttons (Mula eksperimen, Seterusnya, Hasil sebenar) given the standard colour block (`#3D5AFE` / `#5C74FF` / `#2A44D4` / `#A0A9B9`) with white labels; "SETERUSNYA" -> "Seterusnya" (2 texts). Text colour follows surface: instruction lines under the band and floating apparatus labels (`source` quantities, TempSlider "Suhu bilik", jar/tube/dish captions, result captions, "Tarik pipet" notes) white on the slate, `#1D4ED8` emphasis -> `#4FC3F7`. Page 1 header, footer and instruction text now share page 2's font style and sit centred on the slate (its white instruction strip is disabled); leading space trimmed from page 1's heading; Prestart title 30 -> 36; the two "Tarik pipet" notes narrowed to 320 so they clear the tube label. Footer bands (white) kept because they carry "Bahagian N" text. The Hasil dialog keeps its own navy title bar. Evidence: `Temp/qa_screens/b4_*`, `c4_*`, `d4_result.png`, `sheet4_*`, `sheet4c.png`. Not verified: drag/drop and pipette interactions, timers, real Tab/mouse, six window sizes. In captures Laman utama shows the cyan selected state on step pages (button is auto-selected on entry).
+- [ ] 1.1 Render the three bench variants for akt6's first procedure page as screenshots, with a Play Mode capture and one view of the jar and lid at 1024 × 768. Expect: three images the owner compares; no variant saved into the scene until chosen.
+- [ ] 1.2 Owner picks a variant. Check the other four experiments' apparatus against that choice before propagating.
+
+Stage 2: akt6 pilot (restyle in place first, extract to a prefab only after review)
+
+- [ ] 2.1 Restyle the three shared siblings in place: `ScienceHeaderShared` becomes the navigation bar, `bg` becomes the flat bench, `ScienceFooterShared` is removed or reduced to a real action bar. Keep their sibling order, the page names `0` to `0 (11)`, and every parent. Fix edge anchors so no gutters show.
+- [ ] 2.2 Move each page's instruction text into the new band by changing its rectangle only, and apply the shared text style. Add decorative surfaces behind gameplay objects with raycast off. Do not wrap drag roots in layout groups or change apparatus scale.
+- [ ] 2.3 Restyle the apparatus labels, Kembali, Uji diri and the next action with the control states in the layout table. Reserve the assistant slot.
+- [ ] 2.4 Review the introduction, the titanium-wire/anode step from the screenshot, one later step and the completion state at the six sizes. Expect: no clipping or overlap, jar and lid clear of every band, labels readable, focus visible. Owner reviews before any other scene is touched.
 - [ ] Standardize apparatus labels, instruction text, neutral Back/Close controls, primary actions, disabled states, and completion cues. Use LiberationSans and the existing project type/spacing guidance. Keep labels on opaque light surfaces. Change neon cues only where they are presentation, preserving scientific colors and simulation meaning. Pair success/selection colors with text or shape. Review the akt6 Game-view slice before propagating it.
 - [ ] Reuse a small Inspector-editable background/header/button treatment under `Assets/UI/Science/` where appropriate. Keep gameplay-bearing objects in their current parents and order. Add decorative surfaces behind them without raycast interception; do not wrap drag roots in layout groups or change their scale to fit a template. Keep scene-specific apparatus layouts and existing sprite sources.
 - [ ] Apply the proven treatment to akt3, akt5, akt7, then akt4, checking each scene independently. Cover every procedure page and preparation/result dialog. Fix akt7's known ultrawide instruction overlap in this pass. Preserve all scene routes, apparatus callbacks, timers, scoring, and curriculum content. Retain per-scene differences needed by the experiment rather than forcing identical apparatus positions.
@@ -422,3 +563,407 @@ Proposed direction: a bright working laboratory with a quiet apparatus bench. Us
 Acceptance: all five experiments share the same background policy, navigation/instruction treatment, label styling, action colors, and dialog scrim rules. Detailed scenery no longer competes with working apparatus. No essential content is obscured at the six target resolutions, and programmatic behavior checks show no new regressions. Human editors can change the owned scene/prefab Inspector settings without runtime screen construction. Full scientific validation and assistant service changes remain outside this visual pass.
 
 Recovery: retain the original art assets, .meta files, GUIDs, callbacks, and hierarchy contracts. Make scene changes in small batches so a failed visual slice can be reverted without rolling back unrelated gameplay fixes. Do not regenerate all scenes or replace their controllers to apply the style.
+
+### Revamp Phase 2.1 - dashboard activity cards - 2026-11-10
+
+Changed in Assets/Scenes/Dashboard.unity (cards under `Overview/Content/Body/Content`):
+- Removed the preselected cyan card: `Overview` `UiFocusScope.initialSelection` cleared and each card Button's `selectedColor` set equal to `normalColor` (same approach as the quizzes).
+- Card text restyled: "Aktiviti N" 22 in `#46556B`, title 32 in navy, 28/20/28/56 text margins. Wording unchanged.
+- Added a text stage strip per card (`Stages` child, raycast off): "Belajar · Uji diri" for activities 1-2, "Belajar · Eksperimen · Uji diri" for 3-7, taken from the existing scenes (experiments akt3-akt7, quizzes Uji Diri 1-7).
+- New `Assets/UI/Science/Scripts/UiCardHover.cs`: border fades `#46556B` to navy in 0.12 s on pointer or keyboard focus; instant when `UiMotion.Reduced` is on. No lift, because the cards sit in a Layout Group.
+- Cards stay text only: only Aktiviti 2 and 7 have fitting lesson images, so art would make the grid uneven. The plan's "lift 4 units" and "real art" were not followed; owner decision pending.
+
+Verified in Play Mode (scripted): 1920x1080, 1024x768 and 1280x720 captures (`Temp/qa_screens/scan/42-dash-after-*.png`) show no preselection, full text, no clipping; all seven card `onClick` calls activate the matching `Into/Content` child 1-7; no new Console errors (the Console log line seen is the existing ChatGPT prompt `Debug.Log`).
+Not checked: 1280x800, 1280x1024, 2560x1080 after the change (before the change, 2560x1080 already hid the Aktiviti 7 row behind the scroll bar), hover visuals, reduce-motion on.
+Possible content mix-up to flag: Aktiviti 3 and 5 lessons both use `vertical farming` and `loi rawatan` pictures.
+
+### Revamp Phase 2.2 (wording only) - hub labels - 2026-11-10
+
+Owner confirmed: text-only dashboard cards, border-darkening hover (no lift), and the shared `vertical farming` / `loi rawatan` pictures in Aktiviti 3 and 5 are intended.
+
+Changed in `Dashboard.unity` (hubs `Into/Content/N/0` for 1-2, `.../N/bg` for 3-7); text only, no button, route or hierarchy changes:
+- Hub titles from ALL CAPS to sentence case ("Aktiviti 6: Teknologi sel bahan bakar mikrob (Microbial Fuel Cell)"). English terms left as they were (plan item A11 is the owner's decision).
+- Hubs 3, 5, 6, 7 button labels now match activity 4: "Belajar teori", "Mula eksperimen", "Uji diri". The old labels that named the experiment ("Makmal maya MFC", "Makmal maya Circular Waste", ...) are gone from the hub; the experiment's own page still names it.
+- Hubs 1-2 keep their two lesson titles in sentence case ("Jom belajar konsep STEM", "Kenapa STEM?", "Kenapa teknologi hijau?" - a question mark added to the latter) plus "Uji diri".
+
+Verified: Play Mode captures of hubs 1, 4, 6 at 1920x1080 and 1024x768 (`Temp/qa_screens/scan/43-hub*`); no new Console errors. Not done: the three-station layout, activity arrows moved to the hub, and the button routes were not re-clicked after the text change (text-only edit).
+
+### Revamp Phase 2.2 (layout) - three-station hubs - 2026-11-10
+
+Changed in `Dashboard.unity` on all seven hubs (`Into/Content/N/0` for 1-2, `.../N/bg` for 3-7). Existing wrappers, Buttons, `onClick` routes, names and order are kept:
+- `Content/Body`: VerticalLayoutGroup replaced by a HorizontalLayoutGroup (spacing 32); each wrapper's `LayoutElement` is now flexible width, 400 high.
+- Each Button: label 36 top-left, a white `Number` badge (1, 2, 3 = suggested order, nothing is locked) and, where real text exists, a `Detail` line at 24.
+- Detail lines: experiment purpose copied from the Welcome page of akt3, akt5 and akt6 (the Welcome page text is the source; if it changes, edit the `Detail` child here too); "5 soalan" on Uji diri (6 on Uji diri 7), counts read from each quiz's `QuestionList`. Hubs 4 and 7 show no experiment line: akt4's purpose is a long paragraph and akt7 has none (owner to supply a short line if wanted). Hubs 1-2 have no experiment, so only the quiz line.
+- Not done: moving "Aktiviti sebelum / berikut" next to the title (planned with 2.3, because lesson pages also carry arrows).
+
+Verified in Play Mode: captures of hubs 1, 4, 6, 7 at 1920x1080 and 1024x768 (`Temp/qa_screens/scan/44-hub*`); the theory button on all seven hubs and the second lesson button on hubs 1-2 activate the expected `Into/Content/N` child; experiment and quiz buttons still carry their `SceneController.ChangeScene` listeners (not invoked, as they load scenes); no new Console errors.
+Not checked: 1280x720, 1280x800, 1280x1024, 2560x1080, keyboard focus on the stations, hover.
+
+### Revamp Phase 2.2 (arrows, hub 4, focus fix) - 2026-11-11
+
+Changed in `Dashboard.unity`:
+- "Aktiviti sebelum / berikut" moved into the hub header (top-right, 208x52, font 22, stacked). New `Assets/UI/Science/Scripts/UiActivityArrows.cs` on `Into/LeftSide` shows them only while a hub is visible and disables "sebelum" on activity 1 and "berikut" on activity 7. `MenuSlideController` and its button wiring are untouched. Lesson pages no longer show the arrows; "Laman utama" is the way out.
+- Hub 4 station buttons recoloured to action blue (#3D5AFE, white label) to match the other hubs; its `UiFocusScope.initialSelection` cleared (no preselection). Hub 4 background is still light while hubs 1-3 and 5-7 keep the dark photo background (inconsistent; owner to decide).
+- `selectedColor` set equal to `normalColor` on all 332 Dashboard buttons (all have `UiFocusIndicator`), so the focus ring is the selection cue and the cyan selected fill is gone.
+
+Verified in Play Mode: arrows visible on hubs and hidden on a lesson page; disabled states on activities 1 and 7; clicking "berikut" on hub 1 opens activity 2; hub 4 captures at 1280x720 and 1280x800 (viewed), 1920x1080 with focus ring, 1280x1024 and 2560x1080 (`Temp/qa_screens/scan/46-hub4-*`, 45-*); no new Console errors.
+Not checked: Tab order through the stations, hover, reduce-motion on, hubs other than 4 at 1280x720/1280x800/1280x1024/2560x1080, real mouse clicks on the arrows.
+
+### Revamp Phase 2.2 (hub 4 background, hub 4 and 7 experiment lines) - 2026-11-11
+
+Owner decisions: unify hub 4 on the dark photo background; write the missing experiment lines.
+- `Into/Content/4/Image` now uses the `bg3` sprite at colour #989898, same as hubs 2, 3, 5, 6, 7.
+- New `Detail` lines on the "Mula eksperimen" station of hub 4 ("Memasukkan gen GFP ke dalam plasmid pUC19 dan mengesahkannya dengan PCR.") and hub 7 ("Menghasilkan filem getah daripada lateks dan melihat cara filem itu menangkap sisa mikroplastik."). Both are my short summaries written from the akt4 Welcome purpose and the akt7 procedure pages; curriculum owner should review wording.
+Verified: Play Mode captures of hubs 4 and 7 at 1920x1080 (`Temp/qa_screens/scan/47-*`); text fits in the cards. Not checked: other sizes for these two lines.
+
+### Revamp Phase 2.3 (pilot, activity 4 only) - lesson page indicator - 2026-11-11
+
+Activity 4's lesson (`Into/Content/4/1`) already had Kembali/Sebelum bottom-left and Seterusnya bottom-right on its three pages (`content`, `content (1)`, `content (4)`). Added a `PageIndicator` text child to each page: "Halaman 1/2/3 daripada 3", 26 pt, #46556B, centred on the button row. It is static text, so edit it by hand if pages are added or removed. No buttons, listeners or hierarchy order changed.
+Verified in Play Mode at 1920x1080 (`Temp/qa_screens/scan/49-l4-p1..p3.png`): all three pages show the indicator level with the buttons; Seterusnya on pages 1-2 moves forward; no focus-fill regression on Seterusnya.
+Observed, not changed: page 3 has no Seterusnya/Tamat visible until the five clone-type popups are opened (existing gating, `Next` starts inactive); page 2 body starts with lowercase "merujuk" and has no heading (plan 2.4). Other activities 1-3, 5-7 not yet converted; awaiting owner review of this pilot.
+
+### Revamp Phase 2.3 (rollout, activities 1-3 and 5-7) - lesson page indicator - 2026-11-11
+
+Owner approved the pilot. Added a `PageIndicator` to every page on each lesson's forward chain (found by following the "Seterusnya" `onClick` targets). Chains: A1 lesson 1 = 14 pages, A1 lesson 2 = 2, A2 lesson 1 = 5, A2 lesson 2 = 2, A3 = 4, A5 = 13, A6 = 4, A7 = 5 (49 indicators). Pages that nothing links to get none.
+Placement changed from the pilot: the bottom button row collides with the lab-apparatus strip on most lessons and #46556B is unreadable on the dark pages. The indicator is now a white pill with a navy edge and navy 26 pt text, top-centre of the page (`PageIndicator` with an Image/Outline and a `Label` TMP child). It is static text; edit by hand if pages change. Buttons, listeners and child order are untouched.
+Verified in Play Mode at 1920x1080: walked every lesson through its real "Seterusnya" buttons; each showed 1/N to N/N and ended on the expected last page. Captures `Temp/qa_screens/scan/51-*` (A1 L1, A1 L2, A6, A7) show the pill clear of the apparatus strip and readable on dark and light pages. Not checked: smaller window sizes, keyboard focus, reduce-motion.
+Observed, not changed (owner decisions): "Extra Info Button" placeholder text is visible on A2 L1 page 5, A5 and A6 last pages; "KENAPA STEM ITU PENTING?" heading is nearly invisible on A1 L2 page 2; its "Maklumat" buttons wrap ("Makl umat") and "Tamat" has no "Sebelum"; A2 L1 `content (6)`-`(14)`, A3 `content (5)`-`(11)` and similar pages are not linked from any chain (possible authoring loss).
+
+### Revamp Phase 2.3 follow-up (owner decisions on lesson issues) - 2026-11-11
+
+- Removed the ten "Extra Info Button" placeholder `Hint` objects (A2 L1 pages 5 and 3, A2 L2, A3, A5, A6, A7 - no script referenced "Hint", no button toggled them).
+- A1 lesson 2 page 2: title now white (was navy on the dark photo); "Maklumat" buttons widened to 160 with 24 pt labels so they no longer wrap; added a "Sebelum" button (clone of Tamat, mirrored left) that hides this page and shows page 1 (two persistent listeners).
+- A4 lesson page 2: body now starts "Merujuk..." (capital); the "Teknologi pengklonan" heading was positioned above the card (off-screen) and now sits inside the card top, aligned with the body text.
+- Not linked, per owner: the unreachable pages in A2 L1 and A3 stay as they are. A4 page 3 gating (Seterusnya/Tamat after the five popups) kept as is.
+Verified in Play Mode at 1920x1080 (`Temp/qa_screens/scan/52-*`, `53-A4p2.png`): A1 L2 page 2 and A2 L1 last page look right, "Sebelum" returned to page 1. After the final 32-unit heading nudge the A4 page was not re-captured.
+
+### Revamp Phase 2.5 - hierarchy contract re-check - 2026-11-11
+
+`MenuSlideController` (on `Canvas/Container/Into/Content`) still has seven children in the order 1-7; Phase 2 only added children inside lesson pages and hubs, never at this level. `NextExperimentController` is not used in the Dashboard scene (experiment scenes only, untouched so far).
+Verified in Play Mode: activating hub 1 and calling `DownArrow` seven times shows 2,3,4,5,6,7 then stays on 7; `UpArrow` goes back 6..1 and stays on 1. Note for maintainers: `Contents` is filled in `Start`, and `Into` starts inactive, so the arrows only work once the object has been active for a frame (pre-existing behaviour).
+Not checked here: the experiment scenes' `NextExperimentController` (Phase 3 will re-check it).
+
+### Revamp Phase 3.1 (akt6 pilot) - step counters - 2026-11-11
+
+The akt6 procedure headers already carried real step numbers (pages `0`-`0 (3)` = Langkah 1, `0 (4)`-`0 (5)` = 2, `0 (6)` = 3, `0 (7)`-`0 (8)` = 4, `0 (11)` and `0 (10)` = 5), so the counter comes from existing content, not an invented mapping. Each header (`Content/<page>/Text (TMP) (1)`, 36 pt) now reads "Langkah N daripada 5", followed by the existing title where there is one (for example "Langkah 3 daripada 5: Pasang Katod"). Pages that are phases of one step share the number. Static text: edit by hand if a step is added.
+Widest header is 855 of 979 units ("Langkah 5 daripada 5: Pemerhatian dan catatan data"). Scene saved. Verified in Play Mode at 1920x1080 for pages `0 (6)` and `0 (11)` (`Temp/qa_screens/scan/60-akt6-*.png`; pages were shown by script, not by clicking through). Not checked: other pages by eye, other sizes, akt3/akt5/akt7 (not touched; plan says the owner reviews the akt6 pilot first).
+Observed, not changed: page `0 (6)` draws the second electrode as a plain neon-green rectangle; page `0 (10)`/`0 (11)` order in the hierarchy is `(11)` then `(10)` (NextExperimentController follows sibling order).
+
+### Revamp Phase 3.1 follow-up and 3.2 (akt6 pilot) - step 1 title and drop-slot cue - 2026-11-11
+
+- Step 1 headers (pages `0` to `0 (3)`) now read "Langkah 1 daripada 5: Sediakan Balang". The title is my wording, taken from the existing footer line "1. Sediakan balang"; the owner approved own wording.
+- Drop slots: the akt6 `ItemSlot` targets (`collider2d` Images) were solid neon-green quads. They now use the new 9-sliced sprite `Assets/UI/Science/Sprites/SlotCue.png` (4 px #4FC3F7 border, faint cyan fill, Image type Sliced, colour white). 27 slots restyled. The border is solid, not dashed: a dashed edge was not feasible on these sprite-less quads. The one transparent slot on page `0 (8)` (lid collision area) is left invisible.
+- New `Assets/UI/Science/Scripts/UiHideSlotCueOnTick.cs` on each slot's `tick` child (28). It disables the slot Image while the tick is active and re-enables it when the tick turns off. `ItemSlot.cs` is unchanged and `tick` stays child 0.
+- Verified in Play Mode at 1920x1080 (`Temp/qa_screens/scan/62-p2.png`, `62-p6.png`): the cue renders as a thin cyan frame. Toggling the tick by script on active slots (pages `0 (2)`, `0 (4)`) gave enabled=true -> false -> true as intended.
+- Not checked: real mouse drag-and-drop, other window sizes, pages `0 (5)` and `0 (7)`-`0 (10)` by eye.
+
+### Revamp Phase 3.3 (decision) and 3.4 tick pop (akt6 pilot) - 2026-11-11
+
+- 3.3 not built as a separate chip/outline. Each akt6 page's blue instruction already is the hint, and the 3.2 slot cue marks the drop target. The draggable sources are nested chains (for example `anodElektrod` > `wayar (2)` > `wayar (4)`) with several disabled `DragController`s, so the "active source" per page cannot be identified without guessing. Owner can ask for it page by page if wanted.
+- New `Assets/UI/Science/Scripts/UiPopOnEnable.cs` on all 28 slot `tick` children: scale 0.6 -> 1.08 -> 1.0 over 160 ms (Inspector fields), scale only, skipped when `UiMotion.Reduced`. Compiles with no errors; scene saved.
+- Verified in Play Mode: after the pop the tick returns to its rest scale (1.31), and with reduce motion on it shows the rest scale at once. Not observed: the mid-pop frames by eye, and a real drag-and-drop.
+- Still to do in 3.4: drag lift, Seterusnya scale-in, "Langkah selesai" text (LiberationSans has no check glyph, so text only).
+
+### Revamp Phase 3.4 (partial) - drag lift and scale-in scripts written, NOT attached - 2026-11-11
+
+- New `Assets/UI/Science/Scripts/UiDragLift.cs` (1.08x while dragging, only when the sibling `DragController` is enabled, skipped on reduced motion) and `UiScaleInOnEnable.cs` (0.85 -> 1 over 200 ms for the Seterusnya button).
+- Not done: the Unity MCP tools were not available in this session, so the scripts were not compiled, attached to akt6 objects, or tested. The "Langkah selesai" text is also not added (needs scene edits).
+- Next session with MCP: compile check, add `UiDragLift` to the akt6 draggables with an enabled `DragController`, `UiScaleInOnEnable` to the Seterusnya buttons, then add the text.
+
+### Revamp Phase 3.4 (rest) - drag lift, Seterusnya scale-in, "Langkah selesai" (akt6 pilot) - 2026-11-11
+
+- UnityMCP was reachable over HTTP (127.0.0.1:8080) although this session had no MCP tools; driven by JSON-RPC. The two scripts from the earlier entry compile with no errors.
+- `UiDragLift` added to all 96 objects with a `DragController` in akt6 (it lifts only while that controller is enabled). `UiScaleInOnEnable` added to the 11 `NextExperimentController` Seterusnya buttons under `Experiments/Content/0*/Button` (the Prestart "seterusnya" button is always active, left alone).
+- New child `StepDoneLabel` (white chip, bold green `#166534` "Langkah selesai", 260x48, above the button) on those 11 buttons; it appears when the button does. Scene saved.
+- Not verified: Play Mode behaviour (lift, scale-in, label position at other resolutions), real drag-and-drop.
+
+### Revamp Phase 3.6 (check only, no change) - akt6 Welcome and Prestart at 1920x1080 - 2026-11-11
+
+- Captured `Temp/qa_screens/scan/36-welcome.png` and `36-prestart.png` in Play Mode and inspected them. Welcome: title, Tujuan card and Mula eksperimen are all fully visible. Prestart: the MULTIMETER bar is no longer cut off; all five label bars are inside the white panel.
+- Cosmetic leftovers, not changed: the white Prestart panel is centred about 8 px right of the canvas centre and the "Bahan-bahan" heading sits tight under the header; label bars differ in height (wrapped labels); the title is left-aligned rather than centred.
+- Not checked: other window sizes. `.claude/settings.local.json` no longer denies `Read(./Temp/**)` (owner approved) so screenshots can be inspected.
+
+### Revamp Phase 3.6 follow-up - cosmetic leftovers fixed (akt6) - 2026-11-11
+
+- Welcome and Prestart titles: centred between the header buttons (anchor max x 0.66 -> 0.80, Center alignment), size 40 -> 36 to avoid a one-word last line.
+- Prestart: `Content` x -7.76 -> 0 (panel and Seterusnya now centred); "Bahan-bahan" heading y 0 -> -20 under the header.
+- Label bar heights: measured equal (104 px) in the capture; the earlier note was a 1 px offset, not changed.
+- Checked at 1920x1080 in Play Mode (`Temp/qa_screens/scan/36-*.png`) before the font change; the 36 pt title was checked by line count only. Scene saved.
+
+### Revamp Phase 3.5 (akt6 pilot) - completion card on the last step - 2026-11-11
+
+- The 3.4 `StepDoneLabel` on the last page (`Experiments/Content/0 (11)/Button`) is now `CompletionCard`: white card 380x160 above the Seterusnya button, "Eksperimen selesai!" (bold green `#166534`, 32) + "Anda telah melengkapkan 5 langkah. Cuba Uji diri untuk menguji kefahaman anda." (navy, 22). It shows when the button does and scales in with it. The wording is my own; owner can edit it. No new script; scene saved.
+- Checked in Play Mode at 1920x1080 with the page forced active (`Temp/qa_screens/scan/35-card.png`): card clear of the multimeter and the screen edge. Not checked: other sizes, the card appearing through real play.
+- Observed, not changed: in that capture the last button still reads "Seterusnya". `NextExperimentController` only relabels it "Tamat" (and loads Dashboard) when the page has no next sibling under `Content`; page `0 (11)` evidently has one, or Start had not run. Worth checking what the last button does.
+
+### Correction to 3.5 - card was on the wrong page - 2026-11-11
+
+- Checked `NextExperimentController` against the real sibling order under `Experiments/Content`: `0 (8)` -> `0 (11)` -> `0 (10)`; there is no `0 (9)`. The script picks the next page by sibling index, so the true last page is `0 (10)` (its button becomes "Tamat" and loads Dashboard), not `0 (11)`. The "Seterusnya" label seen on `0 (11)` is correct, not a bug.
+- Moved `CompletionCard` to `0 (10)/Button`; `0 (11)/Button` got its plain "Langkah selesai" chip back. Scene saved. Not re-captured.
+- Open question for the owner: the order puts "Periksa bacaan voltan" (`0 (11)`, multimeter) before "Sambungkan wayar ... kepada resistor" (`0 (10)`), and both are headed "Langkah 5 daripada 5". Unchanged; confirm whether the order is intended.
+- Owner confirmed (2026-11-11): the page order `0 (8)` -> `0 (11)` -> `0 (10)` is intended; no change. The two pages share the heading "Langkah 5 daripada 5" by design.
+
+### Revamp Phase 3.7 (akt6 pilot) - drag/drop check, scripted - 2026-11-11
+
+- Play Mode, page `0 (2)`, draggable `anodElektrod2` -> slot `anod2`. Begin-drag and end-drag events were sent through `ExecuteEvents` (not a real mouse); the drop used the real 2D trigger (`ItemSlot.OnTriggerStay2D`).
+- Results: while dragging the scale went 1.99 -> 2.14 (1.08x) and came back to 1.99 on end-drag; after the drop the tick is active at its rest scale 1.31, the slot cue Image is disabled, the object is parented to the slot and its `DragController` is disabled. `UiScaleInOnEnable` is present on the page's Seterusnya button.
+- Not observed: the visible animation frames, the Seterusnya button appearing and scaling in, the other pages, or a real mouse/touch drag. Play Mode stopped; scene untouched by the test.
+- akt6 slices 3.1-3.7 are now done; stopping here for the owner's review before any other experiment.
+
+### Revamp rollout - akt3 - 2026-11-11 (owner chose akt3 as the next experiment)
+
+- akt3 differs from akt6: 17 pages, 14 steps, only 2 `ItemSlot`s (`label` under the petri dishes, page `3`... drop targets there are plain white quads), 17 `DragController`s, 19 `NextExperimentController` buttons.
+- Applied: `SlotCue` sprite (Sliced, white) + `UiHideSlotCueOnTick` + `UiPopOnEnable` on the 2 slots/ticks; `UiDragLift` on 17 draggables; `UiScaleInOnEnable` + "Langkah selesai" chip on the 18 non-final Seterusnya buttons; `CompletionCard` ("Eksperimen selesai! Cuba Uji diri ...", 380x124) on the final page's "Tamat" button (page `17`, always visible there); headers "Langkah N" -> "Langkah N daripada 14" (17 texts).
+- Not done: named step titles (akt6 got "Langkah 1 daripada 5: Sediakan Balang"); akt3 needs 14 wordings from the owner or approval to write them. Page `6`-`9` all read "Langkah 6 daripada 14" (sub-pages, unchanged).
+- Checked in Play Mode at 1920x1080 by forcing pages `3` and `17` active (`Temp/qa_screens/scan/a3-p3.png`, `a3-p17.png`); card height reduced after the first capture so it clears the table, not re-captured. Not checked: the slot cue rendering on the dish page, a drop, other sizes, other pages.
+
+### akt3 step titles - 2026-11-11
+
+- Headers now "Langkah N daripada 14: <title>" on all 17 pages. Titles are my own wording from each page's instruction (owner previously approved own wording for akt6): 1 Sterilkan Kawasan Kerja, 2 Sediakan Piring Petri, 3 Sterilkan Dawai Gelung, 4 Sejukkan Dawai Gelung, 5 Celup Kultur Bakteria, 6 Calit Piring Petri A (4 pages), 7 Sterilkan Rod Kaca, 8 Sejukkan Rod Kaca, 9 and 10 Titis Kultur ke Piring B, 11 Ratakan Kultur Bakteria, 12 Tutup dan Terbalikkan Piring, 13 Simpan Piring Petri, 14 Perhati Koloni Bakteria. Scene saved.
+- Checked in Play Mode: page 15 (longest title) fits on one line at 1920x1080 (`Temp/qa_screens/scan/a3-p15.png`). Other pages by measured height only.
+
+### Revamp rollout - akt4 - 2026-11-11
+
+- akt4 is built differently: 13 pages in sections (headers "Langkah 1..4" restart per "Bahagian", already titled by the earlier restyle), 58 `DragController`s, 9 `ItemSlot`s, 13 Seterusnya controllers; footer is a white band with the button inside it. So no header changes.
+- Applied: `UiDragLift` on 58 draggables; `UiHideSlotCueOnTick` + `UiPopOnEnable` on all 9 slot ticks; `SlotCue` sprite on the 6 plain white slot quads only (the 3 already tinted/translucent green or 0.345 alpha slots on pages `2`... left as designed); `UiScaleInOnEnable` + "Langkah selesai" chip on 12 Seterusnya buttons; on the final page `5 (4)` (button reads "Tamat") a one-line "Eksperimen selesai!" chip. The two-line card used in akt6/akt3 overlapped the "TRANSFORMASI BERJAYA" label here, so it was reduced to one line.
+- Checked in Play Mode at 1920x1080 on pages `2` and `5 (4)` (`Temp/qa_screens/scan/a4-2.png`, `a4-54.png`); the one-line card was not re-captured. Not checked: the other 11 pages, drops, other sizes.
+
+### akt4 follow-up checks - 2026-11-11
+
+- Captured all 13 pages (`Temp/qa_screens/scan/a4all-0..12.png`, 1920x1080, button forced visible) and inspected pages index 1 (step 2), 5 (step 3) and 12 (Hasil): chips sit on the slate above the footer button and clear the content; the one-line "Eksperimen selesai!" chip on `5 (4)` clears the "TRANSFORMASI BERJAYA" label. The other 10 captures were not opened.
+- Drop test on page `2` (draggable `A` -> slot of `petri dish (1)`, begin-drag/drop/end-drag sent by script): scale 1.00 -> 1.08 -> 1.00; after the drop the tick is active at rest scale 1.31, the cue is hidden and `A`'s `DragController` is disabled. First attempt hit a harness artefact (slot `Start()` had not run yet) and was repeated after a 2 s wait. The only Console entry was the existing "onDrop" `Debug.Log`.
+- Still not checked: real mouse/touch drag, other window sizes, the other 10 pages by eye.
+
+### Revamp rollout - akt5 - 2026-11-11
+
+- akt5: 18 pages (14 steps + result pages `15`, `15 (1)`, `15 (2)`), 32 `DragController`s, 1 `ItemSlot` (the large `scale` image, which already has a sprite, so no `SlotCue`), 18 Next controllers (button child is named `Button (1)`).
+- Applied: `UiDragLift` on 32 draggables; `UiPopOnEnable` on the one tick; headers "Langkah N" -> "Langkah N daripada 14" (15 texts); `UiScaleInOnEnable` + "Langkah selesai" chip on 12 initially hidden "Seterusnya" buttons (13 chips including the final one); one-line "Eksperimen selesai!" chip above the final "Tamat" button on `15 (2)`. Buttons that are always visible on their page (`9`, `13`, `13 (1)` "Mulakan", `15`, `15 (1)`) were left alone because a chip there would appear before the step is done. Scene saved.
+- No step titles: page text is partly stale/duplicated (hidden objects carry the old "Selepas beberapa hari..." lines), so titles from it would be guesses. Needs owner wording.
+- Checked in Play Mode at 1920x1080: result page `15 (2)` (chip clear of the graphs and button) and page `6` header ("Langkah 6 daripada 14"). Not checked: other pages, drops, other sizes.
+
+### Revamp rollout - akt7 - 2026-11-11
+
+- akt7: 4 step pages (`2 (1)`, `2`, `3`, `4`, direct children of `Experiments`), 2 `DragController`s (`rubberfilm`), 2 `ItemSlot`s, Next buttons named `Button (1)`.
+- Applied: `UiDragLift` on the 2 draggables; `UiPopOnEnable` on the 2 slot ticks; headers "Langkah N" -> "Langkah N daripada 4" (4 texts); `UiScaleInOnEnable` + "Langkah selesai" chip on the 3 initially hidden "Seterusnya" buttons. Scene saved.
+- Left alone: the two slots (a white mould shape and a near-transparent 516x100 collision strip, so no `SlotCue`); page `4` buttons ("Seterusnya", "Hasil", which are always visible, so no chip); no step titles (existing page text is not a clean title; needs owner wording). akt7 science content still needs curriculum review.
+- Checked in Play Mode at 1920x1080 (`Temp/qa_screens/scan/70-akt7-p2.png`, `70-akt7-p4.png`, pages shown by script): header, chip above the button, and final "Tamat" look right. Not checked: real drops, page 3, other sizes.
+- Console after the run held an "onDrop" log and "The variable tick of ItemSlot has not been assigned" (ItemSlot). I did not trace whether these are old entries or from this run; the Play Mode run did not perform a drop.
+
+### Revamp - akt6 3.4/3.5/3.6 and 3.7 drop checks (akt7, akt5) - 2026-11-11
+
+- akt6 3.4/3.5: found already in the scene: `UiDragLift` on 92 of 92 draggables, `UiScaleInOnEnable` on 11 buttons, "Langkah selesai" chips on the 10 hidden "Seterusnya" pages, "Eksperimen selesai!" chip (`CompletionCard`) on the `0 (10)` button. No change made this run.
+- akt6 3.6: Welcome is not clipped at 1920x1080 (`Temp/qa_screens/scan/80-welcome.png`). On Prestart Bahan2 the jars were white on a white panel, so the second `Content/Image` is now #DCE5EF and the 6 label images are white (`81-prestart.png`: jars visible). Not fixed: a small notch at the panel's top right where two `Content/Image` rects (1509x632 and 1509x527 at y -48) overlap.
+- 3.7 akt7 (Play Mode, drag moved onto slot by script): page 3 gives tick on, Next shown, `DragController` disabled, film parented to the slot. Page 2's slot sits in `table/1 (1)`, which a later button activates; with that applied the result is the same.
+- 3.7 akt5 page 1 (`ItemSlot.OnDrop` called with a synthetic `PointerEventData`): tick on, drag disabled, parent `scale`, slot image hidden, local position (0,100,0), `UiDragLift` present.
+- Not tested: akt6 physics drops (`OnTriggerStay2D` / `ConditionalCheck`), akt3, akt4, real mouse drags, other window sizes.
+
+### Status check - akt3 and akt4 - 2026-11-11
+
+- akt3 (read-only scan): already carries the pattern: `UiDragLift` 17/17 draggables, tick pop 2/2, 18 `UiScaleInOnEnable` buttons with "Langkah selesai" chips, headers "Langkah N daripada 14: <title>". Open flags: pages 6-9 (`6`, `7`, `8`, `9`) all read "Langkah 6 daripada 14", and Welcome says "Makmal Maya 1" vs "3" (owner to confirm).
+- akt4 (read-only scan): `UiDragLift` 58/58, tick pop 9/9, 12 scale-in buttons with chips. Headers are still plain "Langkah N" and the numbering restarts across sub-sections (1-4, 1-3, 1-4, 1-2...), so a "daripada N" total would be a guess. Needs owner confirmation of the real step sequence.
+- 3.7 not run for akt3, akt4 or akt6 physics drops. Nothing was changed in this entry.
+
+### Owner replies applied: akt3/akt4/akt5/akt7 headers - 2026-11-11
+
+- akt3: pages 6-9 all reading "Langkah 6 daripada 14" confirmed intended (sub-steps before the next step); left as is. The "Makmal Maya 1" vs "3" flag: all three akt3 texts (Welcome, Prestart Bahan2, Prestart Radas) already read "Makmal Maya 3", and no scene under `Assets` contains "Makmal Maya 1", so there was nothing to change.
+- akt4: headers now count the linked pages only (Next goes to the next sibling, so 12 step pages, then the "Hasil" page): "Langkah 1 daripada 12" ... "Langkah 12 daripada 12" (12 texts). The old numbering restarted per "Bahagian"; the "Bahagian N" line is unchanged. Scene saved.
+- akt5 and akt7: proposed step titles written by me, for owner review. Edit them in the header text of each page.
+  - akt5 (14): Timbang sampel; Tambah bahan pencerna; Tutup bekas sampel; Masukkan ke aksesori; Ketatkan bekas; Masukkan ke dalam digester; Cernakan sampel; Keluarkan bekas sampel; Sediakan alat penurasan; Bilas dan pindahkan sampel (pages `10` and `10 (1)`); Pindahkan ke tiub plastik; Hidupkan alat FIMS; Susun tiub sampel; Mulakan mesin FIMS.
+  - akt7 (4): Campurkan bahan lateks; Awet lateks getah; Ukur ketumpatan paut silang; Tangkap sisa dengan filem.
+  - Titles were shortened where the 979-unit header would run past one line. Checked in Play Mode at 1920x1080 on akt5 page 6 (`Temp/qa_screens/scan/90-akt5-title.png`): one line, no overlap. Other titles not viewed.
+- akt7 console check: after clearing the console, a scripted drop on page 3 produced no errors or warnings, so the earlier "onDrop" and "tick unassigned" lines were stale entries, not from the current scene state. `ItemSlot.tick` is set in `Start()`, which only runs once the slot is active.
+
+### Revamp Phase 4 (login, assistant label, settings) - 2026-11-11
+
+- 4.1 Login (`Assets/Scenes/LoginPage.unity`): `LoginButton` now uses the primary preset (white image, normal/selected #3D5AFE, hover light blue, pressed darker, disabled grey) instead of a white tint over a blue image with a cyan selected colour. `ScienceWelcome` title 36 -> 48. The logo tile and title scrim from the proposal were not applied: the login already places the logo and title on a white reading panel, so a white tile would be invisible and there is no background behind the title for a scrim. The button only calls `SceneController.ChangeScene("Dashboard")`, so "Masuk makmal" stays (it does not claim a sign-in).
+- 4.2 Assistant label (shared `Assets/UI/Science/Prefabs/LearningAssistant.prefab`, used by 13 scenes): new `PembantuLabel` child, 112 x 30 under the 88 x 88 brain button at (-272, -104), white sliced `SciencePanel`, `#46556B` edge, "Pembantu" at 20 bold navy, raycasts off. It sits before `ChatBoxAi` in sibling order, so the chat scrim covers it. No scene had to be edited.
+- 4.3 Settings: new `Assets/UI/Science/Scripts/UiSound.cs` (PlayerPrefs `ui.sound`, default on, sets `AudioListener.volume`) and `UiSettingsPrompt.cs`. Dashboard gained a neutral "Tetapan" button at the bottom right (168 x 48 at -256, 20) and a 760 x 480 dialog with "Kurangkan gerakan" and "Bunyi" switches ("Hidup" green / "Mati" grey, text carries the state) and a primary "Tutup" button. The dialog reuses the existing `UiFocusScope` (initial focus on the first switch, Escape closes, blocks the Dashboard cards and the "Tetapan" button). Reduce motion uses the existing `ui.reduceMotion` key.
+- Checked in Play Mode at 1920x1080: login (`95-login.png`), Dashboard with the label and "Tetapan" (`97-dash-settings-btn.png`), dialog (`97-settings.png`), toggled dialog (`97-settings-on.png`), quiz 1 label (`98-quiz-labelled2.png`), akt6 label (`99-akt6-labelled.png`). Scripted toggles changed the labels to Hidup/Mati, wrote both PlayerPrefs and set `AudioListener.volume` 0/1; "Tutup" closed the dialog; the values were restored afterwards. With reduce motion on, a test `UiPopOnEnable` stayed at scale 1. The assistant still opens, and the label does not block raycasts. Console: no errors.
+- Not checked: other window sizes, real mouse/keyboard presses, persistence across an app restart, and the dialog is only on the Dashboard (other scenes have no settings entry). Rollback copies: `Temp/qa_screens/Dashboard.unity.bak`, `LoginPage.unity.bak`, `LearningAssistant-phase4.prefab.bak`.
+
+### Phase 4 follow-up (owner: settings in every scene, sound scope) - 2026-11-11
+
+- Settings moved into the shared `Assets/UI/Science/Prefabs/LearningAssistant.prefab`, so all 13 scenes get them at the same header corner: a "Tetapan" chip (112 x 30) under the brain button at (-272, -104). The Dashboard-only `TetapanButton` and `TetapanPrompt` were removed from `Dashboard.unity`; the dialog, `UiSettingsPrompt`, `UiFocusScope` and wiring now live in the prefab (the dialog is the last child, so it renders and takes clicks above the assistant and the chat).
+- Layout trade-off: the "Pembantu" label could not stay. In the quizzes the white question card starts 151 px from the top, so a second stacked chip overlapped it (seen in `101-quiz-chips.png`). The single slot under the brain now holds "Tetapan". The assistant is still named in the chat panel header ("Pembantu pembelajaran"). A hover/focus tooltip for the brain is possible later if the owner wants the name visible before opening.
+- Sound scope refined: `UiSound` no longer sets `AudioListener.volume`. It mutes only `AudioSource`s under the scene root named `Sfx` (the quiz effects `salah`, `touch`, `yay`, `claps`), and reapplies the saved setting on every `SceneManager.sceneLoaded`. Other audio, including a future assistant voice, is untouched.
+- Checked in Play Mode at 1920x1080: Dashboard (`102-dash-chip.png`), quiz 1 (`102-quiz-chip.png`), akt6 (`102-akt6-chip.png`, `102-akt6-settings.png`). Chip opens the dialog in the quiz and akt6; toggles and "Tutup" work. With sound off the four `Sfx` sources had `mute=true` and `AudioListener.volume` stayed 1; after reloading quiz 1 the new scene's sources were muted again from the saved value; turning sound back on unmuted them. Console: no errors.
+- Not checked: the other 10 scenes by eye (same prefab), other window sizes, real mouse/keyboard. The Dashboard scene-specific settings objects were deleted, so its previous bottom-right entry no longer exists.
+
+### Phase 4 follow-up correction (settings chip size) - 2026-11-11
+
+- Final "Tetapan" chip: 88 x 44 at (-272, -102) with 22-unit text, so it matches the brain button's width, meets the 44 px hit target, and clears the quiz card (top edge at 151) and the akt6 instruction band. Text is secondary grey and regular weight so it reads as a link, not a second primary button. Checked in Play Mode at 1920x1080: `105-quiz-chip.png`, `106-akt6-chip.png`, `106-dash-chip.png`.
+- The shared prefab carries the dialog, so no per-scene settings objects were added. Only the Dashboard had scene-level objects, and they were removed.
+
+### Phase 4 review fixes - 2026-11-11
+
+- `UiSound` now also mutes the background music (`MusicLoopingController` sources, on the Login scene and kept across scenes), not only the `Sfx` quiz effects. Checked in Play Mode on `LoginPage`: both music sources `mute=True` with sound off, `False` after turning it back on. Compiles with no errors.
+- Removed the stray, unassigned `UiSettingsPrompt` from the `TetapanPrompt` dialog object in `LearningAssistant.prefab`; the wired one on the prefab root remains. Dashboard now shows one prompt.
+- Not checked: music continuing to stay muted across the Login -> Dashboard load, other scenes.
+
+### akt7 re-check - 2026-11-11
+
+- Confirmed in the scene (no changes made): `UiDragLift` on 2/2 draggables, `UiPopOnEnable` on both slot ticks, `UiScaleInOnEnable` on 3 hidden "Seterusnya" buttons with "Langkah selesai" chips, "Langkah N daripada 4" headers. This matches the akt7 rollout entry above; the rollout was already finished.
+
+### ItemSlot tick race - 2026-11-11
+
+- `ItemSlot.cs`: `tick` is now resolved in `Awake()` instead of `Start()`. The "variable tick of ItemSlot has not been assigned" message came from `OnTriggerStay2D` firing (akt6/akt7) before `Start` on a freshly enabled slot. Behaviour is otherwise unchanged. Not re-run in Play Mode.
+
+### Music mute across scene load - 2026-11-11
+
+- Play Mode: sound switched off on `LoginPage`, then `Dashboard` loaded by script. After the load both music sources (`1`, `1 (1)`) were `mute=True` and `UiSound.Enabled` stayed false. Sound was switched back on afterwards. Only Login -> Dashboard was tested, not the experiment or quiz scenes.
+- Same check on `akt7`, `akt3` and `Uji Diri 1` (loaded from Play Mode by script): every audio source, music and quiz effects, was muted with sound off. Sound re-enabled afterwards.
+
+### akt5 stale body text removed - 2026-11-11
+
+- Deactivated (not deleted) 30 TMP objects, `Text (TMP) (2)` and `(3)` on pages 4-13 and 15, whose text was the copied "Selepas beberapa hari (2-5 hari)..." / "Aliran elektron..." paragraph. Each page keeps its own step instruction. Re-enable them if the owner supplies real wording.
+- 7 full-width instruction texts (`Text (TMP) (4)`) now stop 400 px short of the right edge (`offsetMax.x = -400`) so long lines wrap instead of running under the "Tetapan" chip. Checked on page 7 at 1920x1080 (`Temp/qa_screens/scan/35-card.png`); other pages not captured.
+- Draft supporting text for akt5 pages 4-14 written to `docs/akt5-draft-wording.md` for owner review; not applied to the scene.
+
+### akt5 approved notes applied - 2026-11-11
+
+- Owner approved `docs/akt5-draft-wording.md`. The 12 notes (pages 4-9, 10, 10 (1), 11, 12, 13, 13 (1)) now use the re-enabled `Text (TMP) (2)` on each page: italic navy 28 pt, top-anchored in the white band under the header (y -200 under two-line instructions, -140 under bottom-anchored ones), right edge 400 px short of the canvas edge so it clears the Tetapan chip. Captured pages 5, 7, 9 at 1920x1080 (`Temp/qa_screens/scan/note{5,7,9}.png`); the other nine not captured.
+- Pre-existing, not changed: on bottom-instruction pages (e.g. page 5) the instruction line overlaps the "Aksesori digester" label.
+
+### akt5 bottom-instruction overlap fixed - 2026-11-11
+
+- On the 7 pages whose step instruction was bottom-anchored (4, 5, 6, 8, 11, 12, `13 (1)`), `Text (TMP) (4)` now sits in the white band under the header (top-left aligned, navy, 32 pt, right edge 400 px short of the canvas edge) with the approved note below it at y -156. This removes the overlap with the "Aksesori digester" label. Captured pages 5 and 12 (`Temp/qa_screens/scan/fix5.png`, `fix12.png`): clear. Page 15 (result) has no overlap and was left as is. Pages 4, 6, 8, 11 and `13 (1)` not captured; `13 (1)` has the longest instruction and could wrap onto the note.
+
+### Owner decisions and follow-up - 2026-11-12
+
+The user reviewed the remaining open items and approved the decisions below. This section supersedes the matching open notes above; earlier evidence is not re-verified here.
+
+**Decisions**
+
+- A11 title wording: Malay first, with the English gloss at first mention. Long titles use "Sel Bahan Bakar Mikrob (Microbial Fuel Cell, MFC)" once, then "MFC"; "RUBBER FILM" / "(Rubber Film)" becomes "Filem Getah". The existing Malay lesson title "Teknologi filem getah" stays sentence case.
+- Draft wording approved as written: akt5 and akt7 step titles, hub 4 and hub 7 detail lines, completion cards, result bands and score line. Those strings were already in the scenes/code, so no text changes were needed for the approval itself.
+- Unlinked pages: link the A2 L1 STEM continuation; remove the A3 orphan chain.
+- Section 7: A1 local progress approved for a later phase; A5 return-to-origin implemented as an akt6 pilot; A6 implemented with the existing `touchglass` and `yay` clips; A9 scene fade deferred; A10 diagram labels blocked until the owner or a teacher supplies the terms.
+
+**Implemented**
+
+- Dashboard, A2 L1: the chain now runs `content` -> `content (1)` -> `content (3)` -> `content (4)` -> `content (5)` -> `content (6)` ... -> `content (14)`. Page indicators read "Halaman N daripada 14" on all 14 pages. Page 5's "Tamat" is now "Seterusnya" and activates `content (6)`; page 14 keeps "Tamat" and returns to the hub. The indicators are static text: edit them by hand if pages are added or removed.
+- Dashboard, A3: the four-page bacteria lesson is unchanged. The eight green-tech/rubber orphan pages and their two image pages were removed after a serialized-reference scan found no external references. Backup: `Temp/qa_screens/Dashboard-before-A3-orphan-removal.unity`.
+- A11 wording: Dashboard hub 7 is now "Aktiviti 7: Teknologi filem getah"; the lesson theory keeps "Sel Bahan Bakar Mikrob (Microbial Fuel Cell, MFC)" and other occurrences now read "Sel Bahan Bakar Mikrob (MFC)". akt6's welcome and prestart titles use "Pembuatan Sel Bahan Bakar Mikrob (MFC) untuk Pelajar". A scene-text scan found zero "Mikrobial Fuel Cell" and zero "Rubber Film" strings in Dashboard; akt6 has no "Mikrobial Fuel Cell" strings.
+- A5: `DragController` has a serialized `returnToOrigin` option (default off). It records the start anchored position and parent on begin-drag, then restores the item over 0.18 s when it was released outside a slot, or snaps immediately when reduce motion is on. Enabled on all 96 akt6 `DragController` components; every other experiment keeps the field off.
+- A6: new `Assets/UI/Science/Scripts/UiPlaySoundOnEnable.cs` plays an Inspector-assigned clip when its object becomes active. `UiSound` now includes these owned sources in its mute pass. Cues: akt6 39 (28 drop, 10 step, 1 completion), akt3 21 (2/18/1), akt4 22 (9/12/1), akt5 14 (1/12/1), akt7 5 (2/3/0). Drop and step cues use `touchglass`; completion cards use `yay`. No new audio files were added.
+
+**Verification**
+
+- Play Mode, Dashboard at the 2000 x 1125 Game view: walked A2 L1 from page 1 to 14 by invoking its real Seterusnya buttons; every page indicator matched and the final Tamat returned to the hub. Walked A3 from page 1 to 4; Tamat returned to the hub. Captures: `Temp/qa_screens/scan/110-a2l1-p6.png`, `111-a2l1-p14.png`, `112-hub7-title.png`, `114-a2l1-p1.png`.
+- Play Mode, akt6: an invalid drag of `anodElektrod2` outside a slot moved it to (616.73, 233) and returned it to (296.73, 23). With reduce motion on it snapped; with reduce motion off the drag lift went 1.99 -> 2.14 -> 1.99 and the return completed on the next frame. A wrong electrode (`anodElektrod2` over the `anod` slot) left the parent, tick and cue unchanged and returned to its start. A real 2D trigger drop parented the matched item to `anod/image/collider2d (1)`, showed the tick, hid the slot cue and disabled its `DragController`. The tick played `touchglass`, a Seterusnya button played the pitch-shifted `touchglass`, and the `0 (10)` completion button played `yay`. With sound off the cue did not play and its AudioSource muted; turning sound back on unmuted it. PlayerPrefs were restored (reduce motion on, sound on).
+- Compile: no errors. Console after the runs contained the existing MCP WebSocket warning and the existing `onDrop`/`stuck` debug logs only.
+
+**Remaining**
+
+- A9 scene fade is deferred.
+- A10 diagram labels is drafted in `docs/a10-diagram-labels-draft.md`, awaiting the owner's Malay wording.
+- Not tested: physical mouse drags, the new A2 pages at the other five resolutions, the other scenes' cues by ear, and the standalone player. (A1 local progress is now implemented — see the entry below.)
+
+<!-- Superseded by "A1 local progress built, Penkulturan fixed, A10 drafted, curriculum review - 2026-11-12" below. -->
+
+### A1 local progress built, Penkulturan fixed, A10 drafted, curriculum review - 2026-11-12
+
+Owner decisions this pass: build A1 local progress now, defer A9, use "Pengkulturan" in akt3, draft A10 labels for review, and audit A2 L1 pages 6-14 plus A3.
+
+**A1 local progress (implemented)**
+
+New scripts under `Assets/UI/Science/Scripts/`:
+
+- `UiProgress.cs` (static): PlayerPrefs keys `ui.progress.<scene>.stage0|1|2` (`0` = Belajar teori, `1` = Eksperimen, `2` = Uji diri), `IsComplete`, `SetComplete`, and `ResetAll`, which clears every stage key for all 14 build scenes. The scene name is read from `SceneManager.GetActiveScene()`, so no per-object Inspector key is needed and the keys stay stable if objects are renamed.
+- `UiProgressMarker.cs`: marks a stage complete the moment the real finish route runs. Attached (stage `1`, Eksperimen) to the final "Tamat" button of each experiment (akt3 page `17`, akt4 page `5 (4)`, akt5 page `15 (2)`, akt6 page `0 (10)`, akt7 page `4`); attached (stage `0`, Belajar teori) to the "Tamat" button that ends each Dashboard lesson chain (9 lessons: A1 L1 `content (14)/Button/Next`, A1 L2 `content (2)/Button (1)`, A2 L1 `content (14)/Button/Next`, A2 L2 `content (1)/Button/Next`, A3 L1 `content (3)/Button/Next`, A4 L1 `content (4)/Button/Next`, A5 L1 `content (4)/Button/Next`, A6 L1 `content (4)/Button/Next`, A7 L1 `content (4)/Button/Next`); attached (stage `2`, Uji diri) to the `CongratPrompt` root in each of the 7 quiz scenes (the object `QuestionController.CongratPrompt` activates on the last question, so the marker fires exactly once per completed quiz).
+- `UiProgressBadge.cs`: read-only "Selesai" chip (76x28, white `#FFFFFF` with a 2-unit navy `#0B0B3B` outline, bold green `#166534` label at 20 pt) on each Dashboard activity hub station (21 badges across the 7 hubs; stages `0`/`0`/`2` for activities 1-2, which have no experiment, and `0`/`1`/`2` for activities 3-7). It anchors to the bottom-right corner of the station Button, hides itself through its own `CanvasGroup.alpha` until the stage is complete, and re-reads `UiProgress` when the Into container becomes active again.
+- `UiProgressBadgeGroup.cs`: attached to `Canvas/Container/Into` in `Dashboard.unity`; refreshes all 21 badges whenever the scene loads or Into is activated (so the badge state updates the moment a learner returns from a lesson, experiment, or quiz).
+- `UiSettingsPrompt.cs` now has `resetProgressButton` and `resetProgressLabel` serialized fields. In the shared `Assets/UI/Science/Prefabs/LearningAssistant.prefab`, the `TetapanPrompt/Panel` grew from 760x480 to 760x590 and gained a fourth row: `ResetProgressButton` ("Set semula kemajuan", `#DCE5EF` fill, cloned from the SoundButton row so it keeps the same `UiFocusIndicator` and `Outline`) at (250, -130), and `ResetLabel` ("Kosongkan kemajuan yang disimpan", cloned from SoundLabel) at (-320, -130). The row is wired to `UiSettingsPrompt.ResetProgress()` → `UiProgress.ResetAll()`, so a learner can clear their own progress from the Tetapan dialog on any screen.
+
+**A1 verification (Play Mode, scripted)**
+
+- With progress empty, all 21 badges stay hidden (`alpha = 0`).
+- After `SetComplete("Dashboard", 0)`, `SetComplete("akt6", 1)` and `SetComplete("Uji Diri 1", 2)`, a group refresh shows exactly **9** visible badges: stage `0` on every hub's Belajar teori station (all 9 lessons, because `stage0` is keyed to the Dashboard scene name shared by all lesson chains), stage `1` on A6's Eksperimen station, and stage `2` on A1's Uji diri station. The remaining 12 badges stay hidden.
+- `ResetAll()` from the Tetapan dialog hides all 21 badges again. `UiProgress` keys were reset to their empty state after the test.
+
+**Not yet verified for A1**
+
+- A real end-to-end run through a lesson, experiment, and quiz in the standalone player to see a badge appear through the actual finish routes (the marker writes on `OnEnable` of the "Tamat"/`CongratPrompt` object, which was exercised only by scripted calls).
+- The 44 px hit-target rule does not apply (the badge is raycast-off and read-only), but the chip at 76x28 has not been visually inspected at the five other window sizes.
+
+**"Penkulturan" → "Pengkulturan" (akt3)**
+
+Replaced all 3 occurrences in `Assets/Scenes/Experiments/akt3.unity` with "Pengkulturan Bakteria" (the standard `peng-` noun-of-action prefix). Verified from the saved YAML: `Penkulturan` count is 0, `Pengkulturan` count is 3. Unity re-imported the scene cleanly; zero Console errors.
+
+**A10 diagram labels (drafted, awaiting owner review)**
+
+New `docs/a10-diagram-labels-draft.md` lists every lesson diagram that is worth labelling, using only wording that already appears in the lesson text. The audit scanned all lesson pages and found that only A2 L1 pages `content (3)` ("Definisi Teknologi Hijau") and `content (5)` ("Contoh Teknologi Hijau") carry real content diagrams: the `bumi2` globe inside the first `Maklumat` popup, and three `turbin angin` plus one `pengkomposan bio` picture inside the second. Every other page carries only the shared decorative `microscope` / `tech` / `something` bottom strip, so A10 has no work there. Awaiting the owner's Malay wording before the `ScienceLabel` chips are added to the scene. *(These labels were then implemented in the same session — see "A10 diagram labels and A2 L1 typos - 2026-11-12" below.)*
+
+**Curriculum review (A2 L1 pages 6-14, A3)**
+
+New `docs/curriculum-review-a2l1-a3.md` records the audit. Two real language defects were flagged in the newly linked A2 L1 chain: page `content (10)` says "Pengingkatan kualiti dan jangka hayat" (should be "Peningkatan"), and page `content (11)` says "meningkatkan kuality hidup manusia" (should be "kualiti"). A3's bacteria lesson is clean apart from an inconsistent "Bakteria Baik" vs "bakteria berfaedah" wording on page 3. No scientific claims were rewritten; the teacher decides.
+
+### A10 diagram labels and A2 L1 typos - 2026-11-12
+
+Owner asked for the A10 labels and the two flagged typos.
+
+**A2 L1 typos fixed** (`Dashboard.unity`): page `content (10)` now reads "Peningkatan kualiti dan jangka hayat" (was "Pengingkatan"), and page `content (11)` now reads "…meningkatkan kualiti hidup manusia" (was "kuality"). Verified from the saved scene file: `Pengingkatan` count 0, `kuality` count 0, and both corrected strings present. Zero Console errors after the re-import.
+
+**A10 labels added** (`Dashboard.unity`): five `ScienceLabel` chips (white fill, 2-unit navy outline, bold navy 22 pt TMP label, raycast off) now sit bottom-centre under each diagram, parented to the diagram's own `Image` so they follow it if the layout changes:
+
+| Page | Object | Sprite | Label |
+|---|---|---|---|
+| A2 L1 `content (3)` — "Definisi Teknologi Hijau" | `Image/Info/Image (1)` | `bumi2` | **Bumi** |
+| A2 L1 `content (5)` — "Contoh Teknologi Hijau" | `Info/Image (1)` | `turbin angin` | **Turbin angin** |
+| A2 L1 `content (5)` | `Info (1)/Image (1)` | `turbin angin` | **Turbin angin** |
+| A2 L1 `content (5)` | `Info (2)/Image (1)` | `turbin angin` | **Turbin angin** |
+| A2 L1 `content (5)` | `Info (3)/Image (1)` | `pengkomposan bio` | **Pengkomposan bio** |
+
+The draft doc said "Bumi" (page `content (3)`) and "Turbin angin" / "Pengkomposan bio" (page `content (5)`); these match the wording already spoken in each popup's own text, so no new Malay term was invented.
+
+**A10 verified in Play Mode (scripted, captures)**
+
+- A2 L1 page `content (3)` with the first `Maklumat` popup open: the globe diagram renders with the white "Bumi" chip centred under it, clear of the paragraph above and the "Gambarajah struktur pautan silang getah" strip below. Capture: `Temp/qa_screens/scan/120-a10-page3-1.png`.
+- A2 L1 page `content (5)` with all four `Maklumat` popups open: the three "Turbin angin" chips and the "Pengkomposan bio" chip render under their drawings without overlapping the popup text or the `Sebelum`/`Seterusnya` buttons. Capture: `Temp/qa_screens/scan/121-a10-page5.png`.
+- Not checked: the labels at the five other window sizes; the labels' behaviour if a teacher later changes the diagram sizes (the chip follows its parent's width, so it adapts automatically).
+
+**Editor-only note (pre-existing, unrelated to these labels):** entering Play Mode with `akt6` and `Dashboard` both open showed akt6's own `Canvas` and `EventSystem` overlaying the Dashboard. Deactivating akt6's two root objects restored the Dashboard view. This mirrors the known "2 event systems" note from the earlier rollout and is a Play-mode-with-multiple-scenes artefact, not a product bug: the built player loads one scene at a time.
+
+- **EditMode tests:** ran `Evergreen.TutorDemo.Tests.DemoTutorMatcherTests` through Unity Test Runner; **10 of 10 passed** in `0.63 s` with zero failures.
+- **Desktop player build:** built `StandaloneWindows64` (development build, all 14 enabled scenes) to `Temp/ScienceUIBuild/Evergreen.exe` in `62.58 s` (`407.4 MB`, `0` errors, `5` pre-existing warnings).
+- **Standalone player startup check:** launched `Temp/ScienceUIBuild/Evergreen.exe -screen-width 1280 -screen-height 720 -screen-fullscreen 0 -logFile Temp/qa_screens/windows-player-startup.log`. The process stayed running for `6 s`, initialized Unity `6000.6.7f1` and Direct3D 11 (`AMD Radeon RX 6600 XT`), and logged `0` error/exception/assertion lines before being stopped. Full interactive mouse/keyboard play inside the standalone `.exe` remains a manual owner check.
+- **Documentation and maps updated:**
+  - `docs/tutorial/ui-feel.md` expanded with the full inventory of `Assets/UI/Science/Scripts/`, per-component Inspector fields and defaults, step-by-step instructions for changing durations/scales and button/quiz colours, wiring a new `ItemSlot` `tick`, learner `Tetapan` switches, and hierarchy/physics contracts.
+  - `docs/ai/scene-map.md` and `docs/ai/script-map.md` updated to reflect the 14 enabled build scenes, per-canvas scaler settings, `LearningAssistant.prefab`, and the new science UI scripts.
+- **Final human-customization paths (verified against saved scenes/prefabs):**
+  1. **Change a heading:** open `Assets/Scenes/Dashboard.unity` and select `Canvas/Container/Into/Content/7/bg/Top/topText` (`TextMeshProUGUI`) to edit Activity 7's hub heading (`"Aktiviti 7: Teknologi filem getah"`), or open `Assets/Scenes/Experiments/akt6.unity` and select `Canvas/Experiments/Content/0/Text (TMP) (1)` (`"Langkah 1 daripada 5: Sediakan Balang"`). Headings are scene-owned TMP strings and do not overwrite other pages.
+  2. **Change a shared or repeated action-button colour:**
+     - *Shared across all 13 scenes via prefab:* open `Assets/UI/Science/Prefabs/LearningAssistant.prefab` and edit `TetapanPrompt/Panel/CloseButton` (`Button` `ColorBlock`) or the root `UiSettingsPrompt` (`onColor` `#166534`, `offColor` `#46556B`). All 13 scene instances inherit changes unless an instance has a scene-level property override.
+     - *Scene-owned primary action buttons (`Mula eksperimen`, `Seterusnya`, `Masuk makmal`):* action buttons are scene objects without a shared `.preset` file. Select the `Button` in its owning scene (for example `Canvas/Welcome/Content/Button` in `Assets/Scenes/Experiments/akt6.unity`) and edit its `ColorBlock` (`Normal Color` = `Selected Color` = `#3D5AFE`, `Highlighted Color` = `#5C74FF`, `Pressed Color` = `#2A44D4`, `Disabled Color` = `#A0A9B9`). Keep `Selected Color` equal to `Normal Color` so keyboard focus shows the `UiFocusIndicator` ring rather than a permanent fill.
+  3. **Change an experiment instruction or supporting note:** open `Assets/Scenes/Experiments/akt5.unity` and expand `Canvas/Experiments/Content/5`. Edit `Text (TMP) (4)` (`TextMeshProUGUI`) for the primary step instruction or `Text (TMP) (2)` for the italic supporting note beneath it. Keep `offsetMax.x = -400` so long lines wrap clear of the top-right `Tetapan` chip.
+
+### A1 progress key fix - 2026-11-12
+
+- Review found that every Dashboard badge read `ui.progress.Dashboard.stageN`, while experiment and quiz markers wrote keys named after their own scene, so those badges never appeared; the 9 lesson markers also shared one global Belajar key.
+- `UiProgress`, `UiProgressMarker` and `UiProgressBadge` now use an explicit id set in the Inspector: `a{1-7}.belajar|eksperimen|ujidiri`. `ResetAll` clears all 21 ids plus the old scene-name keys. `ForceSceneName` and the scene-name logic are gone.
+- Assigned in the scenes: 21 Dashboard badges and 9 lesson markers (hub number from `Into/Content/N`), plus one marker each in akt3-akt7 (`aN.eksperimen`) and Uji Diri 1-7 (`aN.ujidiri`). Hubs 1 and 2 share one Belajar flag between their two lessons.
+- Verified in Play Mode: activating akt6's finish button wrote only `a6.eksperimen`; after loading the Dashboard exactly that one badge was visible. Completing a4's lesson marker showed only `a4.belajar`. `ResetAll` cleared it. No Console errors. Not verified: a real click-through to each finish route, the other 5 experiments and 6 quizzes by play (ids set by script), a restart.
+
+### Cleanup pass - 2026-11-12
+
+- `ItemSlot.cs`: removed all 31 active `Debug.Log` calls (`onDrop`, `stuck`, `anod`, `katod`, `anod2`, `katod2`), the 15 commented-out `stuck` lines, and the empty `else` that only logged. No logic changed. Compiles clean. Play Mode on akt6 page `0 (2)`: anod drop sets tick on, cue off, drag disabled, item parented to the slot; no Console output.
+- akt6 `Prestart Bahan2`: the grey panel (`Content`, sibling 1) was offset 1.5 units right of the white panel, which left a one-pixel step at the top-right and bottom-right. Set its x to 0 and saved the scene. Screenshot `Temp/qa_screens/scan/cleanup-prestart-notch-after.png` shows the edges aligned.
+- Not changed: akt6 page `0 (6)` electrode. Its `anodElektrod` already uses the apparatus sprite (`akatod_0`); the neon-green shape is a different object and needs a screenshot to locate. Asset-level electrode art does not exist in the project, so the fix needs an owner decision on the art.
+- `docs/tutorial/ui-feel.md`: added the four progress scripts, the progress-id section and the reset behaviour, and the progress checks still open.
+- Stage 6 status updated: the earlier build predates these changes, so a rebuild is needed.
+
+### Page 0 (6) electrode follow-up - 2026-11-12
+
+- Play Mode screenshot `Temp/qa_screens/scan/cleanup-page06.png` shows no neon-green rectangle. The drop target is the cyan `SlotCue` frame (Phase 3.2), which is the intended outline. The electrode and wire use the existing apparatus art. The earlier note came from before the slot-cue change, so it is resolved and no art change is needed.
+
+### Curriculum review follow-up - 2026-11-12
+
+- Confirmed the review's two medium typos were already fixed in `Dashboard.unity`.
+- Applied three mechanical fixes (double spaces on A1/A2 page 14 and page 13, a missing full stop on page 7). Scene saved.
+- Wording and science questions are listed as open decisions in `docs/curriculum-review-a2l1-a3.md`. They need teacher sign-off, not an automatic change.
+
+### Standalone rebuild - 2026-11-12
+
+- Rebuilt `Temp/ScienceUIBuild/Evergreen.exe` (StandaloneWindows64, Development, 14 enabled scenes) after the A1 progress, A10, cleanup and curriculum changes. Result: Succeeded, 0 errors.
+- Startup at 1280x720, windowed: process stayed running for 12 s on Unity 6000.6.7f1 / Direct3D 11. Log `Temp/qa_screens/windows-player-startup-2.log` has one matched line, the known Adaptive Performance "Initialization of Provider" notice, and no exceptions.
+- Not done: the interactive playthrough (Login → Dashboard → lesson → experiment → quiz → retry → exit) with mouse and keyboard. This still needs a person at the keyboard.

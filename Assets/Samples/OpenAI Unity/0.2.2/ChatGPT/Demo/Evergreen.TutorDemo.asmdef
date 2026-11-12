@@ -1,0 +1,14 @@
+{
+    "name": "Evergreen.TutorDemo",
+    "rootNamespace": "Evergreen.TutorDemo",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

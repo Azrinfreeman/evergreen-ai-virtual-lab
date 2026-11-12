@@ -18,9 +18,10 @@ public class ItemSlot : MonoBehaviour, IDropHandler
     public Transform ButtonNext;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        tick = transform.GetChild(0).GetComponent<Transform>();
+        // Resolve early: physics triggers can fire before Start on a freshly enabled slot.
+        tick = transform.GetChild(0);
     }
 
     // Update is called once `r frame
@@ -29,10 +30,8 @@ public class ItemSlot : MonoBehaviour, IDropHandler
     public void OnDrop(PointerEventData eventData)
     {
         nameScene = SceneManager.GetActiveScene().name.ToString();
-        Debug.Log("onDrop");
         if (!SceneManager.GetActiveScene().name.Equals("akt6"))
         {
-            //Debug.Log("stuck");
             eventData.pointerDrag.transform.SetParent(transform);
             //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
             eventData.pointerDrag.transform.localPosition = new Vector3(0, 0, 0);
@@ -45,10 +44,6 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             {
                 eventData.pointerDrag.transform.localPosition = new Vector3(0, 100f, 0);
             }
-        }
-        else
-        {
-            Debug.Log("stuck");
         }
         GetComponent<Image>().enabled = false;
     }
@@ -66,11 +61,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             {
                 if (jenisAnodKatod == "anod")
                 {
-                    Debug.Log("anod");
                     if (collision.name.Equals("rubberfilm"))
                     {
                         collision.transform.GetComponent<DragController>().enabled = false;
-                        //Debug.Log("stuck");
                         collision.transform.SetParent(transform);
                         //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                         collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -85,11 +78,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             {
                 if (jenisAnodKatod == "anod")
                 {
-                    Debug.Log("anod");
                     if (collision.name.Equals("rubberfilm"))
                     {
                         collision.transform.GetComponent<DragController>().enabled = false;
-                        //Debug.Log("stuck");
                         collision.transform.SetParent(transform);
                         //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                         collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -105,11 +96,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         {
             if (jenisAnodKatod == "anod")
             {
-                Debug.Log("anod");
                 if (collision.name.Equals("anodElektrod"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -121,11 +110,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             }
             else if (jenisAnodKatod == "anod2")
             {
-                Debug.Log("anod");
                 if (collision.name.Equals("anodElektrod2"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -137,11 +124,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             }
             else if (jenisAnodKatod == "katod")
             {
-                Debug.Log("katod");
                 if (collision.name.Equals("katodElektrod"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -153,11 +138,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             }
             else if (jenisAnodKatod == "katod2")
             {
-                Debug.Log("katod2");
                 if (collision.name.Equals("katodElektrod2"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -172,11 +155,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         {
             if (jenisAnodKatod == "anod")
             {
-                Debug.Log("anod");
                 if (collision.name.Equals("anodElektrod"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -188,11 +169,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             }
             else if (jenisAnodKatod == "katod")
             {
-                Debug.Log("katod");
                 if (collision.name.Equals("katodElektrod"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -207,11 +186,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         {
             if (jenisAnodKatod == "anod")
             {
-                Debug.Log("anod");
                 if (collision.name.Equals("anodElektrod"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -223,11 +200,9 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             }
             else if (jenisAnodKatod == "katod")
             {
-                Debug.Log("katod");
                 if (collision.name.Equals("katodElektrod"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -242,33 +217,29 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         {
             if (jenisAnodKatod == "anod")
             {
-                Debug.Log("anod");
                 if (collision.name.Equals("anodElektrod"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
 
                     tick.gameObject.SetActive(true);
-                    ButtonNext.gameObject.SetActive(true);
+                    if (ButtonNext != null) ButtonNext.gameObject.SetActive(true);
                     //transform.gameObject.SetActive(false);
                 }
             }
             else if (jenisAnodKatod == "katod")
             {
-                Debug.Log("katod");
                 if (collision.name.Equals("katodElektrod"))
                 {
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
 
                     tick.gameObject.SetActive(true);
-                    ButtonNext.gameObject.SetActive(true);
+                    if (ButtonNext != null) ButtonNext.gameObject.SetActive(true);
                     //transform.gameObject.SetActive(false);
                 }
             }
@@ -279,9 +250,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             {
                 if (collision.name.Equals("wayarAnod"))
                 {
-                    Debug.Log("anod2");
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);
@@ -295,9 +264,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             {
                 if (collision.name.Equals("watarKatod"))
                 {
-                    Debug.Log("katod2");
                     collision.transform.GetComponent<DragController>().enabled = false;
-                    //Debug.Log("stuck");
                     collision.transform.SetParent(transform);
                     //eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
                     collision.transform.localPosition = new Vector3(0, 0, 0);

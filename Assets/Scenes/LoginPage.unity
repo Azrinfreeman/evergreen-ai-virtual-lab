@@ -1314,8 +1314,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1429,11 +1429,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.87058824, g: 0.92156863, b: 1, a: 1}
-    m_PressedColor: {r: 0.7176471, g: 0.8, b: 0.9607843, a: 1}
-    m_SelectedColor: {r: 0.30980393, g: 0.7647059, b: 0.96862745, a: 1}
-    m_DisabledColor: {r: 0.627451, g: 0.6627451, b: 0.7254902, a: 1}
+    m_NormalColor: {r: 0.23921569, g: 0.3529412, b: 0.99607843, a: 1}
+    m_HighlightedColor: {r: 0.361, g: 0.455, b: 1, a: 1}
+    m_PressedColor: {r: 0.165, g: 0.267, b: 0.831, a: 1}
+    m_SelectedColor: {r: 0.23921569, g: 0.3529412, b: 0.99607843, a: 1}
+    m_DisabledColor: {r: 0.627, g: 0.663, b: 0.725, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.12
   m_SpriteState:
@@ -1477,7 +1477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23921569, g: 0.3529412, b: 0.99607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

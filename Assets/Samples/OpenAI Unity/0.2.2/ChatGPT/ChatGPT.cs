@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Evergreen.TutorDemo;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +32,27 @@ namespace OpenAI
 
         [SerializeField] private TMPro.TextMeshProUGUI statusLabel;
         private bool sending;
+
+        [Header("Tutor source")]
+        [SerializeField]
+        [Tooltip("Auto: live OpenAI tutor when a key exists, scripted replies otherwise. See docs/tutorial/tutor-demo-mode.md.")]
+        private TutorMode mode = TutorMode.Auto;
+
+        [SerializeField]
+        [Tooltip("Scripted replies used when the tutor runs without a key.")]
+        private DemoTutorScript demoScript;
+
+        [SerializeField]
+        [Tooltip("Leave off for the shipped app. Turn on only to record footage; it hides the notice after scripted replies.")]
+        private bool hideDemoNotice;
+
+        [SerializeField]
+        [Tooltip("Off (default): release player builds never call OpenAI and always use the scripted replies, so no key on a learner's machine is used. Turn on only for a build that talks to your own backend.")]
+        private bool allowLiveInRelease;
+
+        private bool usingDemo;
+        private bool liveBlocked;
+        private string pendingQuestion;
 
         private float height;
         public string[,] tablePrompts = new string[,]
@@ -117,6 +139,7 @@ namespace OpenAI
         private void Start()
         {
             button.onClick.AddListener(SendReply);
+            ResolveTutorMode();
 
             // Call this to update the prompt based on CheckBehaviour immediately upon loading
             ChangePrompt();
@@ -146,9 +169,50 @@ namespace OpenAI
             scroll.verticalNormalizedPosition = 0;
         }
 
+        private static bool LaunchedWithDemoFlag()
+        {
+            foreach (string arg in Environment.GetCommandLineArgs())
+                if (string.Equals(arg, "-tutor-demo", StringComparison.OrdinalIgnoreCase)) return true;
+            return false;
+        }
+
+        private void ResolveTutorMode()
+        {
+            // Release builds, and any player started with -tutor-demo (used for trailer capture),
+            // never call OpenAI and always use the scripted replies.
+            bool launchedDemo = LaunchedWithDemoFlag();
+            bool releaseLocked = launchedDemo || (!Application.isEditor && !Debug.isDebugBuild && !allowLiveInRelease);
+            bool wantDemo = releaseLocked || mode == TutorMode.Demo || (mode == TutorMode.Auto && !DemoTutorProvider.KeyAvailable());
+            if (wantDemo && demoScript == null)
+            {
+                if (releaseLocked)
+                {
+                    // Never fall back to a live call in a release build.
+                    Debug.LogError("Tutor mode: release build needs a DemoTutorScript on the ChatGPT component; tutor disabled.");
+                    liveBlocked = true;
+                    usingDemo = false;
+                    return;
+                }
+                Debug.LogError("Tutor mode: Demo needs a DemoTutorScript assigned on the ChatGPT component; using live.");
+                wantDemo = false;
+            }
+            usingDemo = wantDemo;
+            Debug.Log(usingDemo
+                ? (launchedDemo ? "Tutor mode: Demo (-tutor-demo)"
+                    : releaseLocked ? "Tutor mode: Demo (release build)"
+                    : mode == TutorMode.Demo ? "Tutor mode: Demo (forced)" : "Tutor mode: Demo (no key found)")
+                : "Tutor mode: Live");
+        }
+
         private async void SendReply()
         {
-            await SendReplyAsync(request => openai.CreateChatCompletion(request));
+            if (liveBlocked)
+                return;
+            if (usingDemo)
+                await SendReplyAsync(request =>
+                    DemoTutorProvider.ReplyAsync(demoScript, checkBehaviour.BehaviourName, pendingQuestion));
+            else
+                await SendReplyAsync(request => openai.CreateChatCompletion(request));
         }
 
         // Keep the UI event entry point small and allow the request flow to be checked locally.
@@ -163,7 +227,8 @@ namespace OpenAI
 
             try
             {
-                var newMessage = new ChatMessage() { Role = "user", Content = inputField.text.Trim() };
+                pendingQuestion = inputField.text.Trim();
+                var newMessage = new ChatMessage() { Role = "user", Content = pendingQuestion };
                 AppendMessage(newMessage);
                 if (messages.Count == 0) newMessage.Content = prompt + "\n" + newMessage.Content;
                 messages.Add(newMessage);
@@ -191,7 +256,10 @@ namespace OpenAI
                     message.Content = message.Content.Trim();
                     messages.Add(message);
                     AppendMessage(message);
-                    if (statusLabel != null) statusLabel.text = "Semak jawapan bersama bahan pembelajaran.";
+                    if (statusLabel != null)
+                        statusLabel.text = usingDemo && !hideDemoNotice
+                            ? demoScript.notice
+                            : "Semak jawapan bersama bahan pembelajaran.";
                 }
                 else if (statusLabel != null)
                     statusLabel.text = "Tiada jawapan diterima. Cuba hantar soalan semula.";

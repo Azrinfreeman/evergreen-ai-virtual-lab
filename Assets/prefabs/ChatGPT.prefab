@@ -49,3 +49,10 @@ MonoBehaviour:
   scroll: {fileID: 0}
   sent: {fileID: 8660877164928630359, guid: 53cd26a6eefa5a74086203cd118a04d3, type: 3}
   received: {fileID: 961534450149497043, guid: adc0146c2853ed1418133faaf4379eb1, type: 3}
+  model: gpt-6-luna
+  checkBehaviour: {fileID: 0}
+  statusLabel: {fileID: 0}
+  mode: 0
+  demoScript: {fileID: 11400000, guid: 0eb9c88c7d0493044abff6c1e7cc4db6, type: 2}
+  hideDemoNotice: 0
+  prompt: Act as a scientist in a chat room and reply to the questions related to science only. Don't break character. Don't ever mention that you are an AI model. Don't answer question that are not scientific questions
