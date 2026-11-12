@@ -169,9 +169,19 @@ namespace OpenAI
             scroll.verticalNormalizedPosition = 0;
         }
 
+        private static bool LaunchedWithDemoFlag()
+        {
+            foreach (string arg in Environment.GetCommandLineArgs())
+                if (string.Equals(arg, "-tutor-demo", StringComparison.OrdinalIgnoreCase)) return true;
+            return false;
+        }
+
         private void ResolveTutorMode()
         {
-            bool releaseLocked = !Application.isEditor && !Debug.isDebugBuild && !allowLiveInRelease;
+            // Release builds, and any player started with -tutor-demo (used for trailer capture),
+            // never call OpenAI and always use the scripted replies.
+            bool launchedDemo = LaunchedWithDemoFlag();
+            bool releaseLocked = launchedDemo || (!Application.isEditor && !Debug.isDebugBuild && !allowLiveInRelease);
             bool wantDemo = releaseLocked || mode == TutorMode.Demo || (mode == TutorMode.Auto && !DemoTutorProvider.KeyAvailable());
             if (wantDemo && demoScript == null)
             {
@@ -188,7 +198,9 @@ namespace OpenAI
             }
             usingDemo = wantDemo;
             Debug.Log(usingDemo
-                ? (mode == TutorMode.Demo ? "Tutor mode: Demo (forced)" : "Tutor mode: Demo (no key found)")
+                ? (launchedDemo ? "Tutor mode: Demo (-tutor-demo)"
+                    : releaseLocked ? "Tutor mode: Demo (release build)"
+                    : mode == TutorMode.Demo ? "Tutor mode: Demo (forced)" : "Tutor mode: Demo (no key found)")
                 : "Tutor mode: Live");
         }
 

@@ -54,3 +54,13 @@ The owner approved this Malay wording against the curriculum on 2026-11-09. XbaI
 
 - `Auto` with no key; the network-off run; Android or built players.
 - Off-topic and fallback replies in Play Mode (covered by unit tests only).
+
+## Force demo mode with `-tutor-demo`
+
+Start any player build with the `-tutor-demo` argument to force the scripted replies, whatever the `Mode` field says and whether or not a key exists on the machine:
+
+```powershell
+.\Evergreen.exe -tutor-demo
+```
+
+The player log then shows `Tutor mode: Demo (-tutor-demo)` and no request is sent to OpenAI. The trailer capture helper (`trailer/capture/Drive.ps1`) always uses this flag. Release builds already behave this way unless `Allow Live In Release` is on; the flag also covers Development builds.
