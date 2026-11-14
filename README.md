@@ -30,9 +30,9 @@ Progress is stored only on the device that played. The only network calls come f
 
 ## Earlier trailer
 
-[![Watch the 50-second Evergreen STEM Virtual Lab trailer](trailer/out/trailer-poster.png)](trailer/out/trailer.mp4)
+[![Watch the Evergreen STEM Virtual Lab trailer on YouTube](https://img.youtube.com/vi/xLwLS0q_fRw/hqdefault.jpg)](https://youtu.be/xLwLS0q_fRw)
 
-[Watch the trailer](trailer/out/trailer.mp4) (1080p60, 50 seconds) or the [10-second silent tutor loop](trailer/out/readme-loop.mp4).
+[Watch the trailer on YouTube](https://youtu.be/xLwLS0q_fRw) or the [10-second silent tutor loop](trailer/out/readme-loop.mp4).
 
 **About the tutor in the videos:** the assistant's answers in the teaser, the trailer and the loop are the app's scripted demo replies, not OpenAI output, and the teaser works without an OpenAI account. A live OpenAI tutor needs your own key in the Editor (see [`docs/OPENAI_SETUP.md`](docs/OPENAI_SETUP.md)).
 
