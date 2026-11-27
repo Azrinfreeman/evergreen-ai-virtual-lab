@@ -128,9 +128,11 @@ namespace OpenAI
             return false;
         }
 
+#if !UNITY_WEBGL || UNITY_EDITOR
         // Key comes from the OPENAI_API_KEY environment variable; when it is unset the
         // OpenAI-Unity package falls back to ~/.openai/auth.json. Never hard-code keys here.
         public OpenAIApi openai = new OpenAIApi(Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+#endif
 
         private List<ChatMessage> messages = new List<ChatMessage>();
         public string prompt =
@@ -178,11 +180,17 @@ namespace OpenAI
 
         private void ResolveTutorMode()
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            bool launchedDemo = false;
+            bool releaseLocked = true;
+            bool wantDemo = true;
+#else
             // Release builds, and any player started with -tutor-demo (used for trailer capture),
             // never call OpenAI and always use the scripted replies.
             bool launchedDemo = LaunchedWithDemoFlag();
             bool releaseLocked = launchedDemo || (!Application.isEditor && !Debug.isDebugBuild && !allowLiveInRelease);
             bool wantDemo = releaseLocked || mode == TutorMode.Demo || (mode == TutorMode.Auto && !DemoTutorProvider.KeyAvailable());
+#endif
             if (wantDemo && demoScript == null)
             {
                 if (releaseLocked)
@@ -211,8 +219,10 @@ namespace OpenAI
             if (usingDemo)
                 await SendReplyAsync(request =>
                     DemoTutorProvider.ReplyAsync(demoScript, checkBehaviour.BehaviourName, pendingQuestion));
+#if !UNITY_WEBGL || UNITY_EDITOR
             else
                 await SendReplyAsync(request => openai.CreateChatCompletion(request));
+#endif
         }
 
         // Keep the UI event entry point small and allow the request flow to be checked locally.
