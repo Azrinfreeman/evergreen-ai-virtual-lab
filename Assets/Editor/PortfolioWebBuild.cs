@@ -30,10 +30,13 @@ public static class PortfolioWebBuild
         Directory.CreateDirectory(output);
         var originalCompression = PlayerSettings.WebGL.compressionFormat;
         bool originalFallback = PlayerSettings.WebGL.decompressionFallback;
+        bool originalDataCaching = PlayerSettings.WebGL.dataCaching;
         try
         {
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
             PlayerSettings.WebGL.decompressionFallback = true;
+            // The portfolio's script-only iframe cannot access the browser cache.
+            PlayerSettings.WebGL.dataCaching = false;
             var report = BuildPipeline.BuildPlayer(scenes, output, BuildTarget.WebGL, BuildOptions.None);
             if (report.summary.result != BuildResult.Succeeded)
             {
@@ -44,6 +47,7 @@ public static class PortfolioWebBuild
         {
             PlayerSettings.WebGL.compressionFormat = originalCompression;
             PlayerSettings.WebGL.decompressionFallback = originalFallback;
+            PlayerSettings.WebGL.dataCaching = originalDataCaching;
         }
     }
 }

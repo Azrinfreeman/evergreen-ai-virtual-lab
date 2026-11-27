@@ -12,7 +12,7 @@ A Windows 64-bit pre-release build is on the [Releases page](https://github.com/
 
 Open the project with Unity 6000.6.7f1 and install Web Build Support for that Editor version. Select the Web platform in **File > Build Profiles**, then run **Tools > Portfolio > Build Web Demo**. Unity exports the files to `Build/PortfolioWeb` by default. For batch builds, run `PortfolioWebBuild.Build` with the WebGL build target and set `PORTFOLIO_WEB_OUTPUT` to the export directory.
 
-Serve the export over HTTP to test it. The browser demo opens at the activity dashboard, saves progress in the current browser, and uses the scripted tutor. Edit the tutor's answers in the [DemoTutorScript asset](Assets/Samples/OpenAI%20Unity/0.2.2/ChatGPT/Demo/DemoTutorScript.asset).
+Serve the export over HTTP to test it. The browser demo opens at the activity selection screen and uses the scripted tutor. Open the demo in its own browser tab to save progress. Edit the tutor's answers in the [DemoTutorScript asset](Assets/Samples/OpenAI%20Unity/0.2.2/ChatGPT/Demo/DemoTutorScript.asset).
 
 ## What it does
 
