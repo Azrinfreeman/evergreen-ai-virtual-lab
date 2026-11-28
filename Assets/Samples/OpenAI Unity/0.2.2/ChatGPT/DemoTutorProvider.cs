@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Evergreen.TutorDemo;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using UnityEngine;
+#endif
 
 namespace OpenAI
 {
@@ -22,7 +25,18 @@ namespace OpenAI
             DemoTutorScript script, string behaviourKey, string question)
         {
             if (script.thinkingSeconds > 0f)
+            {
+#if UNITY_WEBGL && !UNITY_EDITOR
+                // Wait on Unity's player loop, which runs in single-threaded browser builds.
+                double replyTime = Time.realtimeSinceStartupAsDouble + script.thinkingSeconds;
+                while (Time.realtimeSinceStartupAsDouble < replyTime)
+                {
+                    await Awaitable.NextFrameAsync();
+                }
+#else
                 await Task.Delay((int)(script.thinkingSeconds * 1000f));
+#endif
+            }
 
             DemoReply reply = DemoTutorMatcher.Match(script, behaviourKey, question);
             return new CreateChatCompletionResponse
